@@ -10,8 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -59,11 +57,8 @@ public class Artist implements Serializable {
     @Basic(optional = false)
     @Column(name = "BIRTHPLACE")
     private String birthPlace;
-    @JoinColumn(name = "MUSICGENREID", referencedColumnName = "MUSICGENREID")
-    @ManyToOne(optional = false)
-    private MusicGenre musicGenreID;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "artistID")
-    private List<MusicGroup> musicGroupList;
+    private List<ArtistMusicGroup> artistMusicGroupList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "artistID")
     private List<Album> albumList;
 
@@ -140,21 +135,13 @@ public class Artist implements Serializable {
         this.birthPlace = birthPlace;
     }
 
-    public MusicGenre getMusicgenreid() {
-        return musicGenreID;
-    }
-
-    public void setMusicgenreid(MusicGenre musicGenreID) {
-        this.musicGenreID = musicGenreID;
-    }
-
     @XmlTransient
-    public List<MusicGroup> getMusicGroupList() {
-        return musicGroupList;
+    public List<ArtistMusicGroup> getArtistMusicGroupList() {
+        return artistMusicGroupList;
     }
 
-    public void setMusicGroupList(List<MusicGroup> musicGroupList) {
-        this.musicGroupList = musicGroupList;
+    public void setArtistMusicGroupList(List<ArtistMusicGroup> artistMusicGroupList) {
+        this.artistMusicGroupList = artistMusicGroupList;
     }
 
     @XmlTransient

@@ -1,18 +1,20 @@
 package radiostation;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "PLAYLIST")
@@ -31,9 +33,8 @@ public class PlayList implements Serializable {
     @Basic(optional = false)
     @Column(name = "NAME")
     private String name;
-    @JoinColumn(name = "SONGID", referencedColumnName = "SONGID")
-    @ManyToOne(optional = false)
-    private Song songID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "playListID")
+    private List<SongPlayList> songPlayListList;
 
     public PlayList() {
     }
@@ -63,12 +64,13 @@ public class PlayList implements Serializable {
         this.name = name;
     }
 
-    public Song getSongid() {
-        return songID;
+    @XmlTransient
+    public List<SongPlayList> getSongPlayListList() {
+        return songPlayListList;
     }
 
-    public void setSongid(Song songID) {
-        this.songID = songID;
+    public void setSongPlayListList(List<SongPlayList> songPlayListList) {
+        this.songPlayListList = songPlayListList;
     }
 
     @Override
