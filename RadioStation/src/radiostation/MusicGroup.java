@@ -10,8 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -43,9 +41,8 @@ public class MusicGroup implements Serializable {
     @Column(name = "FORMATIONDATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date formationDate;
-    @JoinColumn(name = "ARTISTID", referencedColumnName = "ARTISTID")
-    @ManyToOne(optional = false)
-    private Artist artistID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "musicGroupID")
+    private List<ArtistMusicGroup> artistMusicGroupList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "musicGroupID")
     private List<Album> albumList;
 
@@ -86,12 +83,13 @@ public class MusicGroup implements Serializable {
         this.formationDate = formationDate;
     }
 
-    public Artist getArtistid() {
-        return artistID;
+    @XmlTransient
+    public List<ArtistMusicGroup> getArtistMusicGroupList() {
+        return artistMusicGroupList;
     }
 
-    public void setArtistid(Artist artistID) {
-        this.artistID = artistID;
+    public void setArtistMusicGroupList(List<ArtistMusicGroup> artistMusicGroupList) {
+        this.artistMusicGroupList = artistMusicGroupList;
     }
 
     @XmlTransient

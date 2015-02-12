@@ -2,7 +2,9 @@ package radiostation;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,10 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "ALBUM")
@@ -53,12 +57,8 @@ public class Album implements Serializable {
     @JoinColumn(name = "MUSICGROUPID", referencedColumnName = "MUSICGROUPID")
     @ManyToOne(optional = false)
     private MusicGroup musicGroupID;
-    @JoinColumn(name = "MUSICPRODUCTIONCOMPANYID", referencedColumnName = "MUSICPRODUCTIONCOMPANYID")
-    @ManyToOne(optional = false)
-    private MusicProductionCompany musicProductionCompanyID;
-    @JoinColumn(name = "SONGID", referencedColumnName = "SONGID")
-    @ManyToOne(optional = false)
-    private Song songID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "albumID")
+    private List<SongAlbum> songAlbumList;
 
     public Album() {
     }
@@ -131,20 +131,13 @@ public class Album implements Serializable {
         this.musicGroupID = musicGroupID;
     }
 
-    public MusicProductionCompany getMusicproductioncompanyid() {
-        return musicProductionCompanyID;
+    @XmlTransient
+    public List<SongAlbum> getSongAlbumList() {
+        return songAlbumList;
     }
 
-    public void setMusicproductioncompanyid(MusicProductionCompany musicProductionCompanyID) {
-        this.musicProductionCompanyID = musicProductionCompanyID;
-    }
-
-    public Song getSongid() {
-        return songID;
-    }
-
-    public void setSongid(Song songID) {
-        this.songID = songID;
+    public void setSongAlbumList(List<SongAlbum> songAlbumList) {
+        this.songAlbumList = songAlbumList;
     }
 
     @Override

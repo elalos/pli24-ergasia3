@@ -9,6 +9,9 @@
     <class>radiostation.MusicProductionCompany</class>
     <class>radiostation.PlayList</class>
     <class>radiostation.Song</class>
+    <class>radiostation.SongPlayList</class>
+    <class>radiostation.ArtistMusicGroup</class>
+    <class>radiostation.SongAlbum</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/radiostation"/>
       <property name="javax.persistence.jdbc.user" value="admin1"/>
