@@ -1,9 +1,7 @@
-package radiostation;
+package pojos;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,10 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "SONG")
@@ -41,10 +37,6 @@ public class Song implements Serializable {
     @Basic(optional = false)
     @Column(name = "TRACKNR")
     private long trackNr;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "songID")
-    private List<Album> albumList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "songID")
-    private List<PlayList> playListList;
 
     public Song() {
     }
@@ -90,24 +82,6 @@ public class Song implements Serializable {
 
     public void setTracknr(long trackNr) {
         this.trackNr = trackNr;
-    }
-
-    @XmlTransient
-    public List<Album> getAlbumList() {
-        return albumList;
-    }
-
-    public void setAlbumList(List<Album> albumList) {
-        this.albumList = albumList;
-    }
-
-    @XmlTransient
-    public List<PlayList> getPlayListList() {
-        return playListList;
-    }
-
-    public void setPlayListList(List<PlayList> playListList) {
-        this.playListList = playListList;
     }
 
     @Override

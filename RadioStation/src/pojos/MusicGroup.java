@@ -1,4 +1,4 @@
-package radiostation;
+package pojos;
 
 import java.io.Serializable;
 import java.util.Date;
