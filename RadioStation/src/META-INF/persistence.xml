@@ -2,16 +2,16 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="RadioStationPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>radiostation.MusicGenre</class>
-    <class>radiostation.Artist</class>
-    <class>radiostation.Album</class>
-    <class>radiostation.MusicGroup</class>
-    <class>radiostation.MusicProductionCompany</class>
-    <class>radiostation.PlayList</class>
-    <class>radiostation.Song</class>
-    <class>radiostation.SongPlayList</class>
-    <class>radiostation.ArtistMusicGroup</class>
-    <class>radiostation.SongAlbum</class>
+    <class>pojos.MusicProductionCompany</class>
+    <class>pojos.PlayList</class>
+    <class>pojos.MusicGenre</class>
+    <class>pojos.Artist</class>
+    <class>pojos.Album</class>
+    <class>pojos.ArtistMusicGroup</class>
+    <class>pojos.SongPlayList</class>
+    <class>pojos.SongAlbum</class>
+    <class>pojos.Song</class>
+    <class>pojos.MusicGroup</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/radiostation"/>
       <property name="javax.persistence.jdbc.user" value="admin1"/>

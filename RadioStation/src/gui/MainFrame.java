@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package radiostation;
+package gui;
 
 /**
  *
@@ -39,6 +39,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem6 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Σύστημα Ραδιοφωνικού Σταθμού");
 
         jMenu1.setText("Μενού");
 
@@ -93,6 +94,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(jSeparator1);
 
         jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItem6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.gif"))); // NOI18N
         jMenuItem6.setText("3-Έξοδος");
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -109,11 +111,11 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 425, Short.MAX_VALUE)
+            .addGap(0, 610, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 227, Short.MAX_VALUE)
+            .addGap(0, 301, Short.MAX_VALUE)
         );
 
         pack();
@@ -192,7 +194,7 @@ public class MainFrame extends javax.swing.JFrame {
             public void run() {
                 new MainFrame().setVisible(true);
             }
-        });
+        });    
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
