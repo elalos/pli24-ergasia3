@@ -1,22 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
-/**
- *
- * @author lego
- */
+import java.awt.BorderLayout;
+
+
+
 public class MainFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
-        initComponents();
-    }
+        initComponents();   
+        
+        // Αρχικοποιήσεις για το JFrame
+        this.setSize(400,300);
+        this.setLocationRelativeTo(null); 
+           
+ }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -107,17 +107,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 301, Short.MAX_VALUE)
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -125,7 +114,11 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListMusicGroupForm lmgf = new ListMusicGroupForm();
         
-        lmgf.setVisible(true);
+        //this.jMenu1.setEnabled(false);
+        
+        this.add(lmgf, BorderLayout.CENTER);
+        
+        this.pack();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -137,29 +130,44 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListArtistForm laf = new ListArtistForm();
         
-        laf.setVisible(true);
+        //this.jMenu1.setEnabled(false);
         
+        this.add(laf,BorderLayout.CENTER);
+        
+        this.pack();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         
         ListMusicGroupAlbumForm lmgaf = new ListMusicGroupAlbumForm();
         
-        lmgaf.setVisible(true);
+        //this.jMenu1.setEnabled(false);
+        
+        this.add(lmgaf,BorderLayout.CENTER);
+        
+        this.pack(); 
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         
         ListArtistAlbumForm laaf = new ListArtistAlbumForm();
         
-        laaf.setVisible(true);    
+        //this.jMenu1.setEnabled(false);
+        
+        this.add(laaf,BorderLayout.CENTER);
+        
+        this.pack();    
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         
         ListPlayListForm lplf = new ListPlayListForm();
         
-        lplf.setVisible(true);    
+        //this.jMenu1.setEnabled(false);
+        
+        this.add(lplf,BorderLayout.CENTER);
+        
+        this.pack();      
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**

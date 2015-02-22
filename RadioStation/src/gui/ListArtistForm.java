@@ -5,25 +5,26 @@
  */
 package gui;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import pojos.Artist;
+import java.awt.EventQueue;
+import java.beans.Beans;
+import java.util.ArrayList;
+
+import java.util.List;
+import javax.persistence.RollbackException;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
- * @author vassago
+ * @author thanasis
  */
-public class ListArtistForm extends javax.swing.JFrame {
+public class ListArtistForm extends JPanel {
     
-    static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("RadioStationPU"); 
-    static EntityManager em = emf.createEntityManager(); 
-    
-    /**
-     * Creates new form ListArtistForm
-     */
     public ListArtistForm() {
         initComponents();
+        if (!Beans.isDesignTime()) {
+            entityManager.getTransaction().begin();
+        }
     }
 
     /**
@@ -36,129 +37,165 @@ public class ListArtistForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        artistQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("select a from Artist a");
-        artistList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(artistQuery.getResultList());
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        query = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT a FROM Artist a");
+        list = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query.getResultList());
+        masterScrollPane = new javax.swing.JScrollPane();
+        masterTable = new javax.swing.JTable();
+        exitButton = new javax.swing.JButton();
+        updateButton = new javax.swing.JButton();
+        newButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        FormListener formListener = new FormListener();
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, artistList, jTable1);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artisticname}"));
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artisticName}"));
         columnBinding.setColumnName("Καλλιτεχνικό όνομα");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${lastname}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${lastName}"));
         columnBinding.setColumnName("Επώνυμο");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${firstname}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${firstName}"));
         columnBinding.setColumnName("Όνομα");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
-        jScrollPane1.setViewportView(jTable1);
+        masterScrollPane.setViewportView(masterTable);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/insert.gif"))); // NOI18N
-        jButton1.setText("Εισαγωγή νέου");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        exitButton.setText("Έξοδος");
+        exitButton.addActionListener(formListener);
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete.gif"))); // NOI18N
-        jButton2.setText("Διαγραφή");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
+        updateButton.setText("Ενημέρωση");
+        updateButton.addActionListener(formListener);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update.png"))); // NOI18N
-        jButton3.setText("Ενημέρωση");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
+        newButton.setText("Εισαγωγή νέου");
+        newButton.addActionListener(formListener);
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.gif"))); // NOI18N
-        jButton4.setText("Έξοδος");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        deleteButton.setText("Διαγραφή");
+        deleteButton.setEnabled(true);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Αρχείο Καλλιτεχνών");
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        deleteButton.addActionListener(formListener);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(newButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(updateButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(exitButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addComponent(masterScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, exitButton, newButton, updateButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                .addGap(66, 66, 66)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addGap(18, 18, 18)
-                .addComponent(jButton4))
+                    .addComponent(exitButton)
+                    .addComponent(updateButton)
+                    .addComponent(deleteButton)
+                    .addComponent(newButton))
+                .addContainerGap())
         );
 
         bindingGroup.bind();
+    }
 
-        pack();
+    // Code for dispatching events from components to event handlers.
+
+    private class FormListener implements java.awt.event.ActionListener {
+        FormListener() {}
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            if (evt.getSource() == exitButton) {
+                ListArtistForm.this.exitButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == updateButton) {
+                ListArtistForm.this.updateButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == newButton) {
+                ListArtistForm.this.newButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == deleteButton) {
+                ListArtistForm.this.deleteButtonActionPerformed(evt);
+            }
+        }
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    @SuppressWarnings("unchecked")
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        entityManager.getTransaction().rollback();
+        entityManager.getTransaction().begin();
+        java.util.Collection data = query.getResultList();
+        for (Object entity : data) {
+            entityManager.refresh(entity);
+        }
+        list.clear();
+        list.addAll(data);
+    }//GEN-LAST:event_updateButtonActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        int[] selected = masterTable.getSelectedRows();
+        List<pojos.Artist> toRemove = new ArrayList<pojos.Artist>(selected.length);
+        for (int idx = 0; idx < selected.length; idx++) {
+            pojos.Artist a = list.get(masterTable.convertRowIndexToModel(selected[idx]));
+            toRemove.add(a);
+            entityManager.remove(a);
+        }
+        list.removeAll(toRemove);
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Artist artist = new Artist();
-        em.persist(artist);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        pojos.Artist a = new pojos.Artist();
+        entityManager.persist(a);
+        list.add(a);
+        int row = list.size() - 1;
+        masterTable.setRowSelectionInterval(row, row);
+        masterTable.scrollRectToVisible(masterTable.getCellRect(row, 0, true));
+    }//GEN-LAST:event_newButtonActionPerformed
+    
+    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        this.setVisible(false);
+ //       this.getParent().jMenu1.setEnabled(false);
+        this.getParent().remove(this);
+    }//GEN-LAST:event_exitButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteButton;
+    private javax.persistence.EntityManager entityManager;
+    private javax.swing.JButton exitButton;
+    private java.util.List<pojos.Artist> list;
+    private javax.swing.JScrollPane masterScrollPane;
+    private javax.swing.JTable masterTable;
+    private javax.swing.JButton newButton;
+    private javax.persistence.Query query;
+    private javax.swing.JButton updateButton;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
+    // End of variables declaration//GEN-END:variables
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -183,26 +220,15 @@ public class ListArtistForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ListArtistForm().setVisible(true);
+                JFrame frame = new JFrame();
+                frame.setContentPane(new ListArtistForm());
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.pack();
+                frame.setVisible(true);
             }
-        });        
-            
-        
-        
+        });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.util.List<pojos.Artist> artistList;
-    private javax.persistence.Query artistQuery;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
-    // End of variables declaration//GEN-END:variables
+    
 }
