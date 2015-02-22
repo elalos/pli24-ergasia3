@@ -1,19 +1,30 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package gui;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.awt.EventQueue;
+import java.beans.Beans;
+import java.util.ArrayList;
 
-public class ListMusicGroupAlbumForm extends javax.swing.JFrame {
+import java.util.List;
+import javax.persistence.RollbackException;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-    static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("RadioStationPU"); 
-    static EntityManager em = emf.createEntityManager(); 
+/**
+ *
+ * @author thanasis
+ */
+public class ListMusicGroupAlbumForm extends JPanel {
     
-    /**
-     * Creates new form ListMusicGroupAlbumForm
-     */
     public ListMusicGroupAlbumForm() {
         initComponents();
+        if (!Beans.isDesignTime()) {
+            entityManager.getTransaction().begin();
+        }
     }
 
     /**
@@ -26,88 +37,161 @@ public class ListMusicGroupAlbumForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        musicGroupAlbumQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT al FROM Album al");
-        musicGroupAlbumList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(musicGroupAlbumQuery.getResultList());
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        query = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT a FROM Album a");
+        list = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query.getResultList());
+        masterScrollPane = new javax.swing.JScrollPane();
+        masterTable = new javax.swing.JTable();
+        exitButton = new javax.swing.JButton();
+        updateButton = new javax.swing.JButton();
+        newButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        FormListener formListener = new FormListener();
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, musicGroupAlbumList, jTable1);
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${title}"));
         columnBinding.setColumnName("Τίτλος");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${musicgroupid}"));
-        columnBinding.setColumnName("Musicgroupid");
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${musicGroupID}"));
+        columnBinding.setColumnName("Music Group ID");
         columnBinding.setColumnClass(pojos.MusicGroup.class);
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
-        jScrollPane1.setViewportView(jTable1);
+        masterScrollPane.setViewportView(masterTable);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/insert.gif"))); // NOI18N
-        jButton1.setText("Εισαγωγή νέου");
+        exitButton.setText("Έξοδος");
+        exitButton.addActionListener(formListener);
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete.gif"))); // NOI18N
-        jButton2.setText("Διαγραφή");
+        updateButton.setText("Ενημέρωση");
+        updateButton.addActionListener(formListener);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/update.png"))); // NOI18N
-        jButton3.setText("Ενημέρωση");
+        newButton.setText("Εισαγωγή νέου");
+        newButton.addActionListener(formListener);
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.gif"))); // NOI18N
-        jButton4.setText("Έξοδος");
+        deleteButton.setText("Διαγραφή");
+        deleteButton.setEnabled(true);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Πίνακας Άλμπουμ Συγκροτημάτων");
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        deleteButton.addActionListener(formListener);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(newButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(updateButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(exitButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3))
-                    .addComponent(jButton4))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addComponent(masterScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, exitButton, newButton, updateButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addGap(18, 18, 18)
-                .addComponent(jButton4))
+                    .addComponent(exitButton)
+                    .addComponent(updateButton)
+                    .addComponent(deleteButton)
+                    .addComponent(newButton))
+                .addContainerGap())
         );
 
         bindingGroup.bind();
+    }
 
-        pack();
+    // Code for dispatching events from components to event handlers.
+
+    private class FormListener implements java.awt.event.ActionListener {
+        FormListener() {}
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            if (evt.getSource() == exitButton) {
+                ListMusicGroupAlbumForm.this.exitButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == updateButton) {
+                ListMusicGroupAlbumForm.this.updateButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == newButton) {
+                ListMusicGroupAlbumForm.this.newButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == deleteButton) {
+                ListMusicGroupAlbumForm.this.deleteButtonActionPerformed(evt);
+            }
+        }
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    
+
+    @SuppressWarnings("unchecked")
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        entityManager.getTransaction().rollback();
+        entityManager.getTransaction().begin();
+        java.util.Collection data = query.getResultList();
+        for (Object entity : data) {
+            entityManager.refresh(entity);
+        }
+        list.clear();
+        list.addAll(data);
+    }//GEN-LAST:event_updateButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        int[] selected = masterTable.getSelectedRows();
+        List<pojos.Album> toRemove = new ArrayList<pojos.Album>(selected.length);
+        for (int idx = 0; idx < selected.length; idx++) {
+            pojos.Album a = list.get(masterTable.convertRowIndexToModel(selected[idx]));
+            toRemove.add(a);
+            entityManager.remove(a);
+        }
+        list.removeAll(toRemove);
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        pojos.Album a = new pojos.Album();
+        entityManager.persist(a);
+        list.add(a);
+        int row = list.size() - 1;
+        masterTable.setRowSelectionInterval(row, row);
+        masterTable.scrollRectToVisible(masterTable.getCellRect(row, 0, true));
+    }//GEN-LAST:event_newButtonActionPerformed
+    
+    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        this.setVisible(false);
+        // this.getParent().jMenu1.setEnabled(true);
+        this.getParent().remove(this);
+    }//GEN-LAST:event_exitButtonActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteButton;
+    private javax.persistence.EntityManager entityManager;
+    private javax.swing.JButton exitButton;
+    private java.util.List<pojos.Album> list;
+    private javax.swing.JScrollPane masterScrollPane;
+    private javax.swing.JTable masterTable;
+    private javax.swing.JButton newButton;
+    private javax.persistence.Query query;
+    private javax.swing.JButton updateButton;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
+    // End of variables declaration//GEN-END:variables
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -132,23 +216,15 @@ public class ListMusicGroupAlbumForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ListMusicGroupAlbumForm().setVisible(true);
+                JFrame frame = new JFrame();
+                frame.setContentPane(new ListMusicGroupAlbumForm());
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.pack();
+                frame.setVisible(true);
             }
         });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private java.util.List<pojos.Album> musicGroupAlbumList;
-    private javax.persistence.Query musicGroupAlbumQuery;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
-    // End of variables declaration//GEN-END:variables
+    
 }
