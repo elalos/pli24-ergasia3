@@ -43,9 +43,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
         masterScrollPane = new javax.swing.JScrollPane();
         masterTable = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
-        updateButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
         newButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         FormListener formListener = new FormListener();
 
@@ -65,8 +66,8 @@ public class ListMusicGroupAlbumForm extends JPanel {
         exitButton.setText("Έξοδος");
         exitButton.addActionListener(formListener);
 
-        updateButton.setText("Ενημέρωση");
-        updateButton.addActionListener(formListener);
+        editButton.setText("Ενημέρωση");
+        editButton.addActionListener(formListener);
 
         newButton.setText("Εισαγωγή νέου");
         newButton.addActionListener(formListener);
@@ -79,37 +80,44 @@ public class ListMusicGroupAlbumForm extends JPanel {
 
         deleteButton.addActionListener(formListener);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Πίνακας Άλμπουμ Συγκροτημάτων");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(newButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(updateButton)
+                        .addComponent(editButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exitButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(masterScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(exitButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, exitButton, newButton, updateButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, editButton, exitButton, newButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                .addGap(46, 46, 46)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exitButton)
-                    .addComponent(updateButton)
+                    .addComponent(editButton)
                     .addComponent(deleteButton)
                     .addComponent(newButton))
                 .addContainerGap())
@@ -126,8 +134,8 @@ public class ListMusicGroupAlbumForm extends JPanel {
             if (evt.getSource() == exitButton) {
                 ListMusicGroupAlbumForm.this.exitButtonActionPerformed(evt);
             }
-            else if (evt.getSource() == updateButton) {
-                ListMusicGroupAlbumForm.this.updateButtonActionPerformed(evt);
+            else if (evt.getSource() == editButton) {
+                ListMusicGroupAlbumForm.this.editButtonActionPerformed(evt);
             }
             else if (evt.getSource() == newButton) {
                 ListMusicGroupAlbumForm.this.newButtonActionPerformed(evt);
@@ -141,7 +149,7 @@ public class ListMusicGroupAlbumForm extends JPanel {
     
 
     @SuppressWarnings("unchecked")
-    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         entityManager.getTransaction().rollback();
         entityManager.getTransaction().begin();
         java.util.Collection data = query.getResultList();
@@ -150,7 +158,7 @@ public class ListMusicGroupAlbumForm extends JPanel {
         }
         list.clear();
         list.addAll(data);
-    }//GEN-LAST:event_updateButtonActionPerformed
+    }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int[] selected = masterTable.getSelectedRows();
@@ -181,14 +189,15 @@ public class ListMusicGroupAlbumForm extends JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton editButton;
     private javax.persistence.EntityManager entityManager;
     private javax.swing.JButton exitButton;
+    private javax.swing.JLabel jLabel1;
     private java.util.List<pojos.Album> list;
     private javax.swing.JScrollPane masterScrollPane;
     private javax.swing.JTable masterTable;
     private javax.swing.JButton newButton;
     private javax.persistence.Query query;
-    private javax.swing.JButton updateButton;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {

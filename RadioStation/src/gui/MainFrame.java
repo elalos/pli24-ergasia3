@@ -13,8 +13,8 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();   
         
         // Αρχικοποιήσεις για το JFrame
-        this.setSize(400,300);
-        this.setLocationRelativeTo(null); 
+        setSize(400,300);
+        setLocationRelativeTo(null); 
            
  }
 
@@ -114,11 +114,11 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListMusicGroupForm lmgf = new ListMusicGroupForm();
         
-        //this.jMenu1.setEnabled(false);
+        //jMenu1.setEnabled(false);
         
-        this.add(lmgf, BorderLayout.CENTER);
+        add(lmgf, BorderLayout.CENTER);
         
-        this.pack();
+        pack();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -130,44 +130,44 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListArtistForm laf = new ListArtistForm();
         
-        //this.jMenu1.setEnabled(false);
+        //jMenu1.setEnabled(false);
         
-        this.add(laf,BorderLayout.CENTER);
+        add(laf,BorderLayout.CENTER);
         
-        this.pack();
+        pack();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         
         ListMusicGroupAlbumForm lmgaf = new ListMusicGroupAlbumForm();
         
-        //this.jMenu1.setEnabled(false);
+        //jMenu1.setEnabled(false);
         
-        this.add(lmgaf,BorderLayout.CENTER);
+        add(lmgaf,BorderLayout.CENTER);
         
-        this.pack(); 
+        pack(); 
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         
         ListArtistAlbumForm laaf = new ListArtistAlbumForm();
         
-        //this.jMenu1.setEnabled(false);
+        //jMenu1.setEnabled(false);
         
-        this.add(laaf,BorderLayout.CENTER);
+        add(laaf,BorderLayout.CENTER);
         
-        this.pack();    
+        pack();    
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         
         ListPlayListForm lplf = new ListPlayListForm();
         
-        //this.jMenu1.setEnabled(false);
+        //jMenu1.setEnabled(false);
         
-        this.add(lplf,BorderLayout.CENTER);
+        add(lplf,BorderLayout.CENTER);
         
-        this.pack();      
+        pack();       
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
