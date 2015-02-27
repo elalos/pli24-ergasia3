@@ -1,14 +1,13 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.Beans;
-import java.util.ArrayList;
-
-import java.util.List;
-import javax.persistence.RollbackException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import pojos.MusicGroup;
+import scripts.MyWindowEvent;
 
 public class ListMusicGroupForm extends JPanel {
     
@@ -143,19 +142,165 @@ public class ListMusicGroupForm extends JPanel {
 
     @SuppressWarnings("unchecked")
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        EditMusicGroupForm emgf = new EditMusicGroupForm();
+        int row = jTable1.getSelectedRow();
+        mg = list1.get(row);
+        emgf = new EditMusicGroupForm(mg, false);
         emgf.setVisible(true);
+        
+        emgf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.set(row, mg);
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        int row = jTable1.getSelectedRow();
+        mg = list1.get(row);
+        emgf = new EditMusicGroupForm(mg, false);
+        emgf.setVisible(true);
         
+        emgf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.remove(mg);
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.remove(row);
+                    //jTable1.setRowSelectionInterval(row, row);
+                    //jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         mg = new MusicGroup();
-        //this.entityManager.persist(mg);
-        emgf = new EditMusicGroupForm();
+        em.persist(mg);
+        emgf = new EditMusicGroupForm(mg, false);
         emgf.setVisible(true);
+        
+        emgf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.add(mg);
+                    int row = list1.size() - 1;
+                    
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_newButtonActionPerformed
     
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed

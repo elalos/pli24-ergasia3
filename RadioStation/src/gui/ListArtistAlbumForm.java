@@ -1,12 +1,10 @@
 package gui;
 
 import java.awt.EventQueue;
-import java.beans.Beans;
 import java.util.ArrayList;
 
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.RollbackException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
