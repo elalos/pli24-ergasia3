@@ -1,11 +1,8 @@
 package pojos;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +12,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -24,41 +20,33 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "PlayList.findAll", query = "SELECT p FROM PlayList p"),
-    @NamedQuery(name = "PlayList.findByPlaylistid", query = "SELECT p FROM PlayList p WHERE p.playListID = :playListID"),
+    @NamedQuery(name = "PlayList.findByPlaylistid", query = "SELECT p FROM PlayList p WHERE p.playlistid = :playlistid"),
     @NamedQuery(name = "PlayList.findByName", query = "SELECT p FROM PlayList p WHERE p.name = :name")})
 public class PlayList implements Serializable {
-    @Transient
-    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "PLAYLISTID")
-    private Long playListID;
-    @Basic(optional = false)
+    private Long playlistid;
     @Column(name = "NAME")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "playListID")
-    private List<SongPlayList> songPlayListList;
+    @OneToMany(mappedBy = "playlistid")
+    private List<PlayListSong> playListSongList;
 
     public PlayList() {
     }
 
-    public PlayList(Long playListID) {
-        this.playListID = playListID;
-    }
-
-    public PlayList(Long playListID, String name) {
-        this.playListID = playListID;
-        this.name = name;
+    public PlayList(Long playlistid) {
+        this.playlistid = playlistid;
     }
 
     public Long getPlaylistid() {
-        return playListID;
+        return playlistid;
     }
 
-    public void setPlaylistid(Long playListID) {
-        this.playListID = playListID;
+    public void setPlaylistid(Long playlistid) {
+        this.playlistid = playlistid;
     }
 
     public String getName() {
@@ -66,24 +54,22 @@ public class PlayList implements Serializable {
     }
 
     public void setName(String name) {
-        String oldName = this.name;
         this.name = name;
-        changeSupport.firePropertyChange("name", oldName, name);
     }
 
     @XmlTransient
-    public List<SongPlayList> getSongPlayListList() {
-        return songPlayListList;
+    public List<PlayListSong> getPlayListSongList() {
+        return playListSongList;
     }
 
-    public void setSongPlayListList(List<SongPlayList> songPlayListList) {
-        this.songPlayListList = songPlayListList;
+    public void setPlayListSongList(List<PlayListSong> playListSongList) {
+        this.playListSongList = playListSongList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (playListID != null ? playListID.hashCode() : 0);
+        hash += (playlistid != null ? playlistid.hashCode() : 0);
         return hash;
     }
 
@@ -94,7 +80,7 @@ public class PlayList implements Serializable {
             return false;
         }
         PlayList other = (PlayList) object;
-        if ((this.playListID == null && other.playListID != null) || (this.playListID != null && !this.playListID.equals(other.playListID))) {
+        if ((this.playlistid == null && other.playlistid != null) || (this.playlistid != null && !this.playlistid.equals(other.playlistid))) {
             return false;
         }
         return true;
@@ -102,15 +88,7 @@ public class PlayList implements Serializable {
 
     @Override
     public String toString() {
-        return "radiostation.PlayList[ playListID=" + playListID + " ]";
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.removePropertyChangeListener(listener);
+        return "pojos.PlayList[ playlistid=" + playlistid + " ]";
     }
 
 }

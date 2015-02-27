@@ -1,6 +1,7 @@
 package pojos;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,15 +10,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "MUSICPRODUCTIONCOMPANY")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MusicProductionCompany.findAll", query = "SELECT m FROM MusicProductionCompany m"),
-    @NamedQuery(name = "MusicProductionCompany.findByMusicproductioncompanyid", query = "SELECT m FROM MusicProductionCompany m WHERE m.musicProductionCompanyID = :musicProductionCompanyID"),
+    @NamedQuery(name = "MusicProductionCompany.findByMusicproductioncompanyid", query = "SELECT m FROM MusicProductionCompany m WHERE m.musicproductioncompanyid = :musicproductioncompanyid"),
     @NamedQuery(name = "MusicProductionCompany.findByName", query = "SELECT m FROM MusicProductionCompany m WHERE m.name = :name"),
     @NamedQuery(name = "MusicProductionCompany.findByAddress", query = "SELECT m FROM MusicProductionCompany m WHERE m.address = :address"),
     @NamedQuery(name = "MusicProductionCompany.findByTelephone", query = "SELECT m FROM MusicProductionCompany m WHERE m.telephone = :telephone")})
@@ -27,37 +30,29 @@ public class MusicProductionCompany implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "MUSICPRODUCTIONCOMPANYID")
-    private Long musicProductionCompanyID;
-    @Basic(optional = false)
+    private Long musicproductioncompanyid;
     @Column(name = "NAME")
     private String name;
-    @Basic(optional = false)
     @Column(name = "ADDRESS")
     private String address;
-    @Basic(optional = false)
     @Column(name = "TELEPHONE")
     private String telephone;
+    @OneToMany(mappedBy = "musicproductioncompanyid")
+    private List<Album> albumList;
 
     public MusicProductionCompany() {
     }
 
-    public MusicProductionCompany(Long musicProductionCompanyID) {
-        this.musicProductionCompanyID = musicProductionCompanyID;
-    }
-
-    public MusicProductionCompany(Long musicProductionCompanyID, String name, String address, String telephone) {
-        this.musicProductionCompanyID = musicProductionCompanyID;
-        this.name = name;
-        this.address = address;
-        this.telephone = telephone;
+    public MusicProductionCompany(Long musicproductioncompanyid) {
+        this.musicproductioncompanyid = musicproductioncompanyid;
     }
 
     public Long getMusicproductioncompanyid() {
-        return musicProductionCompanyID;
+        return musicproductioncompanyid;
     }
 
-    public void setMusicproductioncompanyid(Long musicProductionCompanyID) {
-        this.musicProductionCompanyID = musicProductionCompanyID;
+    public void setMusicproductioncompanyid(Long musicproductioncompanyid) {
+        this.musicproductioncompanyid = musicproductioncompanyid;
     }
 
     public String getName() {
@@ -84,10 +79,19 @@ public class MusicProductionCompany implements Serializable {
         this.telephone = telephone;
     }
 
+    @XmlTransient
+    public List<Album> getAlbumList() {
+        return albumList;
+    }
+
+    public void setAlbumList(List<Album> albumList) {
+        this.albumList = albumList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (musicProductionCompanyID != null ? musicProductionCompanyID.hashCode() : 0);
+        hash += (musicproductioncompanyid != null ? musicproductioncompanyid.hashCode() : 0);
         return hash;
     }
 
@@ -98,7 +102,7 @@ public class MusicProductionCompany implements Serializable {
             return false;
         }
         MusicProductionCompany other = (MusicProductionCompany) object;
-        if ((this.musicProductionCompanyID == null && other.musicProductionCompanyID != null) || (this.musicProductionCompanyID != null && !this.musicProductionCompanyID.equals(other.musicProductionCompanyID))) {
+        if ((this.musicproductioncompanyid == null && other.musicproductioncompanyid != null) || (this.musicproductioncompanyid != null && !this.musicproductioncompanyid.equals(other.musicproductioncompanyid))) {
             return false;
         }
         return true;
@@ -106,7 +110,7 @@ public class MusicProductionCompany implements Serializable {
 
     @Override
     public String toString() {
-        return "radiostation.MusicProductionCompany[ musicProductionCompanyID=" + musicProductionCompanyID + " ]";
+        return "pojos.MusicProductionCompany[ musicproductioncompanyid=" + musicproductioncompanyid + " ]";
     }
 
 }

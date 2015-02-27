@@ -1,24 +1,19 @@
 package pojos;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -27,93 +22,77 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Artist.findAll", query = "SELECT a FROM Artist a"),
-    @NamedQuery(name = "Artist.findByArtistid", query = "SELECT a FROM Artist a WHERE a.artistID = :artistID"),
-    @NamedQuery(name = "Artist.findByFirstname", query = "SELECT a FROM Artist a WHERE a.firstName = :firstName"),
-    @NamedQuery(name = "Artist.findByLastname", query = "SELECT a FROM Artist a WHERE a.lastName = :lastName"),
-    @NamedQuery(name = "Artist.findByArtisticname", query = "SELECT a FROM Artist a WHERE a.artisticName = :artisticName"),
+    @NamedQuery(name = "Artist.findByArtistid", query = "SELECT a FROM Artist a WHERE a.artistid = :artistid"),
+    @NamedQuery(name = "Artist.findByFirstname", query = "SELECT a FROM Artist a WHERE a.firstname = :firstname"),
+    @NamedQuery(name = "Artist.findByLastname", query = "SELECT a FROM Artist a WHERE a.lastname = :lastname"),
+    @NamedQuery(name = "Artist.findByArtisticname", query = "SELECT a FROM Artist a WHERE a.artisticname = :artisticname"),
     @NamedQuery(name = "Artist.findBySex", query = "SELECT a FROM Artist a WHERE a.sex = :sex"),
-    @NamedQuery(name = "Artist.findByBirthday", query = "SELECT a FROM Artist a WHERE a.birthDay = :birthDay"),
-    @NamedQuery(name = "Artist.findByBirthplace", query = "SELECT a FROM Artist a WHERE a.birthPlace = :birthPlace")})
+    @NamedQuery(name = "Artist.findByBirthday", query = "SELECT a FROM Artist a WHERE a.birthday = :birthday"),
+    @NamedQuery(name = "Artist.findByBirthplace", query = "SELECT a FROM Artist a WHERE a.birthplace = :birthplace")})
 public class Artist implements Serializable {
-    @Transient
-    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ARTISTID")
-    private Long artistID;
-    @Basic(optional = false)
+    private Long artistid;
     @Column(name = "FIRSTNAME")
-    private String firstName;
-    @Basic(optional = false)
+    private String firstname;
     @Column(name = "LASTNAME")
-    private String lastName;
-    @Basic(optional = false)
+    private String lastname;
     @Column(name = "ARTISTICNAME")
-    private String artisticName;
-    @Basic(optional = false)
+    private String artisticname;
     @Column(name = "SEX")
     private String sex;
-    @Basic(optional = false)
     @Column(name = "BIRTHDAY")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date birthDay;
-    @Basic(optional = false)
+    private String birthday;
     @Column(name = "BIRTHPLACE")
-    private String birthPlace;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "artistID")
-    private List<ArtistMusicGroup> artistMusicGroupList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "artistID")
+    private String birthplace;
+    @JoinColumn(name = "MUSICGENREID", referencedColumnName = "MUSICGENREID")
+    @ManyToOne
+    private MusicGenre musicgenreid;
+    @OneToMany(mappedBy = "artistid")
     private List<Album> albumList;
+    @OneToMany(mappedBy = "artistid")
+    private List<MusicGroupArtist> musicGroupArtistList;
 
     public Artist() {
     }
 
-    public Artist(Long artistID) {
-        this.artistID = artistID;
-    }
-
-    public Artist(Long artistID, String firstName, String lastName, String artisticName, String sex, Date birthDay, String birthPlace) {
-        this.artistID = artistID;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.artisticName = artisticName;
-        this.sex = sex;
-        this.birthDay = birthDay;
-        this.birthPlace = birthPlace;
+    public Artist(Long artistid) {
+        this.artistid = artistid;
     }
 
     public Long getArtistid() {
-        return artistID;
+        return artistid;
     }
 
-    public void setArtistid(Long artistID) {
-        this.artistID = artistID;
+    public void setArtistid(Long artistid) {
+        this.artistid = artistid;
     }
 
     public String getFirstname() {
-        return firstName;
+        return firstname;
     }
 
-    public void setFirstname(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
     public String getLastname() {
-        return lastName;
+        return lastname;
     }
 
-    public void setLastname(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getArtisticname() {
-        return artisticName;
+        return artisticname;
     }
 
-    public void setArtisticname(String artisticName) {
-        this.artisticName = artisticName;
+    public void setArtisticname(String artisticname) {
+        this.artisticname = artisticname;
     }
 
     public String getSex() {
@@ -121,34 +100,31 @@ public class Artist implements Serializable {
     }
 
     public void setSex(String sex) {
-        String oldSex = this.sex;
         this.sex = sex;
-        changeSupport.firePropertyChange("sex", oldSex, sex);
     }
 
-    public Date getBirthday() {
-        return birthDay;
+    public String getBirthday() {
+        return birthday;
     }
 
-    public void setBirthday(Date birthDay) {
-        this.birthDay = birthDay;
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     public String getBirthplace() {
-        return birthPlace;
+        return birthplace;
     }
 
-    public void setBirthplace(String birthPlace) {
-        this.birthPlace = birthPlace;
+    public void setBirthplace(String birthplace) {
+        this.birthplace = birthplace;
     }
 
-    @XmlTransient
-    public List<ArtistMusicGroup> getArtistMusicGroupList() {
-        return artistMusicGroupList;
+    public MusicGenre getMusicgenreid() {
+        return musicgenreid;
     }
 
-    public void setArtistMusicGroupList(List<ArtistMusicGroup> artistMusicGroupList) {
-        this.artistMusicGroupList = artistMusicGroupList;
+    public void setMusicgenreid(MusicGenre musicgenreid) {
+        this.musicgenreid = musicgenreid;
     }
 
     @XmlTransient
@@ -160,10 +136,19 @@ public class Artist implements Serializable {
         this.albumList = albumList;
     }
 
+    @XmlTransient
+    public List<MusicGroupArtist> getMusicGroupArtistList() {
+        return musicGroupArtistList;
+    }
+
+    public void setMusicGroupArtistList(List<MusicGroupArtist> musicGroupArtistList) {
+        this.musicGroupArtistList = musicGroupArtistList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (artistID != null ? artistID.hashCode() : 0);
+        hash += (artistid != null ? artistid.hashCode() : 0);
         return hash;
     }
 
@@ -174,7 +159,7 @@ public class Artist implements Serializable {
             return false;
         }
         Artist other = (Artist) object;
-        if ((this.artistID == null && other.artistID != null) || (this.artistID != null && !this.artistID.equals(other.artistID))) {
+        if ((this.artistid == null && other.artistid != null) || (this.artistid != null && !this.artistid.equals(other.artistid))) {
             return false;
         }
         return true;
@@ -182,15 +167,7 @@ public class Artist implements Serializable {
 
     @Override
     public String toString() {
-        return "radiostation.Artist[ artistID=" + artistID + " ]";
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.removePropertyChangeListener(listener);
+        return "pojos.Artist[ artistid=" + artistid + " ]";
     }
 
 }
