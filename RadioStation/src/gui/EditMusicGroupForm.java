@@ -1,7 +1,15 @@
 package gui;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import pojos.MusicGroup;
+import scripts.MyWindowEvent;
+
 public class EditMusicGroupForm extends javax.swing.JFrame {
 
+    private MusicGroup musicGroup1;
+    private boolean readOnly;
+    
     /**
      * Creates new form EditMusicGroupForm
      */
@@ -9,6 +17,15 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         initComponents();
     }
 
+    public EditMusicGroupForm(MusicGroup mg, boolean readOnly) {
+        musicGroup1 = mg;
+        this.readOnly = readOnly;
+        em = javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        if ( !(em.getTransaction().isActive()) )
+            em.getTransaction().begin();
+        initComponents(); 
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -20,6 +37,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        musicGroup2 = musicGroup1;
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -41,6 +59,9 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
 
         jLabel2.setText("Επωνυμία:");
 
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, musicGroup2, org.jdesktop.beansbinding.ELProperty.create("${name}"), jTextField1, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
+
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
@@ -48,6 +69,9 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         });
 
         jLabel3.setText("Ημερομηνία δημιουργίας: ");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, musicGroup2, org.jdesktop.beansbinding.ELProperty.create("${formationdate}"), jTextField2, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
 
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -75,23 +99,15 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null},
+                {null},
+                {null},
+                {null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "null"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         jScrollPane1.setViewportView(jTable1);
 
         jButton3.setText("Εισαγωγή Καλλιτέχνη");
@@ -103,7 +119,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
 
         jButton4.setText("Διαγραφή Καλλιτέχνη");
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), jButton4, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), jButton4, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -186,11 +202,17 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+       MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
+        for (WindowListener l : this.getWindowListeners())
+            l.windowClosed(we);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
+        for (WindowListener l : this.getWindowListeners())
+            l.windowClosed(we);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -250,6 +272,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private pojos.MusicGroup musicGroup2;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
