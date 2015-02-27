@@ -1,30 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
+import scripts.MyWindowEvent;
 import java.awt.EventQueue;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.Beans;
-import java.util.ArrayList;
 
-import java.util.List;
-import javax.persistence.RollbackException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import pojos.Artist;
 
-/**
- *
- * @author thanasis
- */
+
 public class ListArtistForm extends JPanel {
+    
+    private EditArtistForm eaf;
+    private Artist a;
     
     public ListArtistForm() {
         initComponents();
         if (!Beans.isDesignTime()) {
-            entityManager.getTransaction().begin();
+            em.getTransaction().begin();
         }
     }
 
@@ -38,11 +33,11 @@ public class ListArtistForm extends JPanel {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
-        query = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT a FROM Artist a");
-        list = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query.getResultList());
+        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT a FROM Artist a");
+        list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
-        masterTable = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         newButton = new javax.swing.JButton();
@@ -51,36 +46,39 @@ public class ListArtistForm extends JPanel {
 
         FormListener formListener = new FormListener();
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artisticName}"));
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list1, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artisticname}"));
         columnBinding.setColumnName("Καλλιτεχνικό όνομα");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${lastName}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${lastname}"));
         columnBinding.setColumnName("Επώνυμο");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${firstName}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${firstname}"));
         columnBinding.setColumnName("Όνομα");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
-        masterScrollPane.setViewportView(masterTable);
+        masterScrollPane.setViewportView(jTable1);
 
         exitButton.setText("Έξοδος");
         exitButton.addActionListener(formListener);
 
         editButton.setText("Ενημέρωση");
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), editButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
         editButton.addActionListener(formListener);
 
         newButton.setText("Εισαγωγή νέου");
         newButton.addActionListener(formListener);
 
         deleteButton.setText("Διαγραφή");
-        deleteButton.setEnabled(true);
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
         deleteButton.addActionListener(formListener);
@@ -155,22 +153,166 @@ public class ListArtistForm extends JPanel {
 
     @SuppressWarnings("unchecked")
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        EditArtistForm eaf = new EditArtistForm();
+        int row = jTable1.getSelectedRow();
+        a = list1.get(row);
+        eaf = new EditArtistForm(a, false);
         eaf.setVisible(true);
+        
+        eaf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.set(row, a);
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        int row = jTable1.getSelectedRow();
+        a = list1.get(row);
+        eaf = new EditArtistForm(a, false);
+        eaf.setVisible(true);
         
+        eaf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.remove(a);
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.remove(row);
+                    //jTable1.setRowSelectionInterval(row, row);
+                    //jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });        
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        Artist a = new Artist();
-        //this.entityManager.persist(a);
-        EditArtistForm eaf = new EditArtistForm();
+        a = new Artist();
+        em.persist(a);
+        eaf = new EditArtistForm(a, false);
         eaf.setVisible(true);
         
-        
-        
+        eaf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.add(a);
+                    int row = list1.size() - 1;
+                    
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
+                
     }//GEN-LAST:event_newButtonActionPerformed
     
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
@@ -183,14 +325,14 @@ public class ListArtistForm extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
-    private javax.persistence.EntityManager entityManager;
+    private javax.persistence.EntityManager em;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
-    private java.util.List<pojos.Artist> list;
+    private javax.swing.JTable jTable1;
+    private java.util.List<pojos.Artist> list1;
     private javax.swing.JScrollPane masterScrollPane;
-    private javax.swing.JTable masterTable;
     private javax.swing.JButton newButton;
-    private javax.persistence.Query query;
+    private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {

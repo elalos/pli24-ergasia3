@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import java.awt.EventQueue;
@@ -14,16 +9,12 @@ import javax.persistence.RollbackException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-/**
- *
- * @author thanasis
- */
 public class ListMusicGroupAlbumForm extends JPanel {
     
     public ListMusicGroupAlbumForm() {
         initComponents();
         if (!Beans.isDesignTime()) {
-            entityManager.getTransaction().begin();
+            em.getTransaction().begin();
         }
     }
 
@@ -37,11 +28,11 @@ public class ListMusicGroupAlbumForm extends JPanel {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
-        query = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT a FROM Album a");
-        list = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query.getResultList());
+        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT a FROM Album a");
+        list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
-        masterTable = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         newButton = new javax.swing.JButton();
@@ -50,7 +41,7 @@ public class ListMusicGroupAlbumForm extends JPanel {
 
         FormListener formListener = new FormListener();
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list1, jTable1);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${title}"));
         columnBinding.setColumnName("Τίτλος");
         columnBinding.setColumnClass(String.class);
@@ -61,21 +52,24 @@ public class ListMusicGroupAlbumForm extends JPanel {
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
-        masterScrollPane.setViewportView(masterTable);
+        masterScrollPane.setViewportView(jTable1);
 
         exitButton.setText("Έξοδος");
         exitButton.addActionListener(formListener);
 
         editButton.setText("Ενημέρωση");
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), editButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
         editButton.addActionListener(formListener);
 
         newButton.setText("Εισαγωγή νέου");
         newButton.addActionListener(formListener);
 
         deleteButton.setText("Διαγραφή");
-        deleteButton.setEnabled(true);
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
         deleteButton.addActionListener(formListener);
@@ -150,34 +144,34 @@ public class ListMusicGroupAlbumForm extends JPanel {
 
     @SuppressWarnings("unchecked")
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        entityManager.getTransaction().rollback();
-        entityManager.getTransaction().begin();
-        java.util.Collection data = query.getResultList();
+        em.getTransaction().rollback();
+        em.getTransaction().begin();
+        java.util.Collection data = query1.getResultList();
         for (Object entity : data) {
-            entityManager.refresh(entity);
+            em.refresh(entity);
         }
-        list.clear();
-        list.addAll(data);
+        list1.clear();
+        list1.addAll(data);
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        int[] selected = masterTable.getSelectedRows();
+        int[] selected = jTable1.getSelectedRows();
         List<pojos.Album> toRemove = new ArrayList<pojos.Album>(selected.length);
         for (int idx = 0; idx < selected.length; idx++) {
-            pojos.Album a = list.get(masterTable.convertRowIndexToModel(selected[idx]));
+            pojos.Album a = list1.get(jTable1.convertRowIndexToModel(selected[idx]));
             toRemove.add(a);
-            entityManager.remove(a);
+            em.remove(a);
         }
-        list.removeAll(toRemove);
+        list1.removeAll(toRemove);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         pojos.Album a = new pojos.Album();
-        entityManager.persist(a);
-        list.add(a);
-        int row = list.size() - 1;
-        masterTable.setRowSelectionInterval(row, row);
-        masterTable.scrollRectToVisible(masterTable.getCellRect(row, 0, true));
+        em.persist(a);
+        list1.add(a);
+        int row = list1.size() - 1;
+        jTable1.setRowSelectionInterval(row, row);
+        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));
     }//GEN-LAST:event_newButtonActionPerformed
     
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
@@ -190,14 +184,14 @@ public class ListMusicGroupAlbumForm extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
-    private javax.persistence.EntityManager entityManager;
+    private javax.persistence.EntityManager em;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
-    private java.util.List<pojos.Album> list;
+    private javax.swing.JTable jTable1;
+    private java.util.List<pojos.Album> list1;
     private javax.swing.JScrollPane masterScrollPane;
-    private javax.swing.JTable masterTable;
     private javax.swing.JButton newButton;
-    private javax.persistence.Query query;
+    private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {

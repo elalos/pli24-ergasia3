@@ -12,10 +12,13 @@ import pojos.MusicGroup;
 
 public class ListMusicGroupForm extends JPanel {
     
+    private MusicGroup mg;
+    private EditMusicGroupForm emgf;
+    
     public ListMusicGroupForm() {
         initComponents();
         if (!Beans.isDesignTime()) {
-            entityManager.getTransaction().begin();
+            em.getTransaction().begin();
         }
     }
 
@@ -29,11 +32,11 @@ public class ListMusicGroupForm extends JPanel {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
-        query = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT m FROM MusicGroup m");
-        list = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query.getResultList());
+        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT m FROM MusicGroup m");
+        list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
-        masterTable = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         newButton = new javax.swing.JButton();
@@ -42,28 +45,31 @@ public class ListMusicGroupForm extends JPanel {
 
         FormListener formListener = new FormListener();
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list1, jTable1);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
         columnBinding.setColumnName("Επωνυμία");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
-        masterScrollPane.setViewportView(masterTable);
+        masterScrollPane.setViewportView(jTable1);
 
         exitButton.setText("Έξοδος");
         exitButton.addActionListener(formListener);
 
         editButton.setText("Ενημέρωση");
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), editButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
         editButton.addActionListener(formListener);
 
         newButton.setText("Εισαγωγή νέου");
         newButton.addActionListener(formListener);
 
         deleteButton.setText("Διαγραφή");
-        deleteButton.setEnabled(true);
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
         deleteButton.addActionListener(formListener);
@@ -146,9 +152,9 @@ public class ListMusicGroupForm extends JPanel {
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        MusicGroup mg = new MusicGroup();
+        mg = new MusicGroup();
         //this.entityManager.persist(mg);
-        EditMusicGroupForm emgf = new EditMusicGroupForm();
+        emgf = new EditMusicGroupForm();
         emgf.setVisible(true);
     }//GEN-LAST:event_newButtonActionPerformed
     
@@ -162,14 +168,14 @@ public class ListMusicGroupForm extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
-    private javax.persistence.EntityManager entityManager;
+    private javax.persistence.EntityManager em;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
-    private java.util.List<pojos.MusicGroup> list;
+    private javax.swing.JTable jTable1;
+    private java.util.List<pojos.MusicGroup> list1;
     private javax.swing.JScrollPane masterScrollPane;
-    private javax.swing.JTable masterTable;
     private javax.swing.JButton newButton;
-    private javax.persistence.Query query;
+    private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {

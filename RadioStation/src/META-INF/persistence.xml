@@ -12,6 +12,14 @@
     <class>pojos.SongAlbum</class>
     <class>pojos.Song</class>
     <class>pojos.MusicGroup</class>
+    <class>pojos.Musicgenre</class>
+    <class>pojos.Playlist</class>
+    <class>pojos.Artistmusicgroup</class>
+    <class>pojos.Musicgroup</class>
+    <class>pojos.Musicproductioncompany</class>
+    <class>pojos.PlayListSong</class>
+    <class>pojos.MusicGroupArtist</class>
+    <class>pojos.AlbumSong</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/radiostation"/>
       <property name="javax.persistence.jdbc.user" value="admin1"/>

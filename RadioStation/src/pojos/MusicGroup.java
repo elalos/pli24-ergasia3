@@ -1,12 +1,8 @@
 package pojos;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,9 +12,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -27,49 +20,38 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MusicGroup.findAll", query = "SELECT m FROM MusicGroup m"),
-    @NamedQuery(name = "MusicGroup.findByMusicgroupid", query = "SELECT m FROM MusicGroup m WHERE m.musicGroupID = :musicGroupID"),
+    @NamedQuery(name = "MusicGroup.findByMusicgroupid", query = "SELECT m FROM MusicGroup m WHERE m.musicgroupid = :musicgroupid"),
     @NamedQuery(name = "MusicGroup.findByName", query = "SELECT m FROM MusicGroup m WHERE m.name = :name"),
-    @NamedQuery(name = "MusicGroup.findByFormationdate", query = "SELECT m FROM MusicGroup m WHERE m.formationDate = :formationDate")})
+    @NamedQuery(name = "MusicGroup.findByFormationdate", query = "SELECT m FROM MusicGroup m WHERE m.formationdate = :formationdate")})
 public class MusicGroup implements Serializable {
-    @Transient
-    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "MUSICGROUPID")
-    private Long musicGroupID;
-    @Basic(optional = false)
+    private Long musicgroupid;
     @Column(name = "NAME")
     private String name;
-    @Basic(optional = false)
     @Column(name = "FORMATIONDATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date formationDate;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "musicGroupID")
-    private List<ArtistMusicGroup> artistMusicGroupList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "musicGroupID")
+    private String formationdate;
+    @OneToMany(mappedBy = "musicgroupid")
     private List<Album> albumList;
+    @OneToMany(mappedBy = "musicgroupid")
+    private List<MusicGroupArtist> musicGroupArtistList;
 
     public MusicGroup() {
     }
 
-    public MusicGroup(Long musicGroupID) {
-        this.musicGroupID = musicGroupID;
-    }
-
-    public MusicGroup(Long musicGroupID, String name, Date formationDate) {
-        this.musicGroupID = musicGroupID;
-        this.name = name;
-        this.formationDate = formationDate;
+    public MusicGroup(Long musicgroupid) {
+        this.musicgroupid = musicgroupid;
     }
 
     public Long getMusicgroupid() {
-        return musicGroupID;
+        return musicgroupid;
     }
 
-    public void setMusicgroupid(Long musicGroupID) {
-        this.musicGroupID = musicGroupID;
+    public void setMusicgroupid(Long musicgroupid) {
+        this.musicgroupid = musicgroupid;
     }
 
     public String getName() {
@@ -77,26 +59,15 @@ public class MusicGroup implements Serializable {
     }
 
     public void setName(String name) {
-        String oldName = this.name;
         this.name = name;
-        changeSupport.firePropertyChange("name", oldName, name);
     }
 
-    public Date getFormationdate() {
-        return formationDate;
+    public String getFormationdate() {
+        return formationdate;
     }
 
-    public void setFormationdate(Date formationDate) {
-        this.formationDate = formationDate;
-    }
-
-    @XmlTransient
-    public List<ArtistMusicGroup> getArtistMusicGroupList() {
-        return artistMusicGroupList;
-    }
-
-    public void setArtistMusicGroupList(List<ArtistMusicGroup> artistMusicGroupList) {
-        this.artistMusicGroupList = artistMusicGroupList;
+    public void setFormationdate(String formationdate) {
+        this.formationdate = formationdate;
     }
 
     @XmlTransient
@@ -108,10 +79,19 @@ public class MusicGroup implements Serializable {
         this.albumList = albumList;
     }
 
+    @XmlTransient
+    public List<MusicGroupArtist> getMusicGroupArtistList() {
+        return musicGroupArtistList;
+    }
+
+    public void setMusicGroupArtistList(List<MusicGroupArtist> musicGroupArtistList) {
+        this.musicGroupArtistList = musicGroupArtistList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (musicGroupID != null ? musicGroupID.hashCode() : 0);
+        hash += (musicgroupid != null ? musicgroupid.hashCode() : 0);
         return hash;
     }
 
@@ -122,7 +102,7 @@ public class MusicGroup implements Serializable {
             return false;
         }
         MusicGroup other = (MusicGroup) object;
-        if ((this.musicGroupID == null && other.musicGroupID != null) || (this.musicGroupID != null && !this.musicGroupID.equals(other.musicGroupID))) {
+        if ((this.musicgroupid == null && other.musicgroupid != null) || (this.musicgroupid != null && !this.musicgroupid.equals(other.musicgroupid))) {
             return false;
         }
         return true;
@@ -130,15 +110,7 @@ public class MusicGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "radiostation.MusicGroup[ musicGroupID=" + musicGroupID + " ]";
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.removePropertyChangeListener(listener);
+        return "pojos.MusicGroup[ musicgroupid=" + musicgroupid + " ]";
     }
 
 }
