@@ -1,4 +1,4 @@
-package scripts;
+package misc;
 
 import java.awt.Window;
 import java.awt.event.WindowEvent;

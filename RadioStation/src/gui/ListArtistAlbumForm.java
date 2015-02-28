@@ -2,18 +2,18 @@ package gui;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
-
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import misc.DBManager;
 
 public class ListArtistAlbumForm extends JPanel {
     
-    private EntityManager em;
+    private final EntityManager em;
     
     public ListArtistAlbumForm() {
-        em = javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
         initComponents();

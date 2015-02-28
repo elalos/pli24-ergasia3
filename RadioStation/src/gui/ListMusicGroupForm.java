@@ -3,22 +3,24 @@ package gui;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.beans.Beans;
+import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import misc.DBManager;
 import pojos.MusicGroup;
-import scripts.MyWindowEvent;
+import misc.MyWindowEvent;
 
 public class ListMusicGroupForm extends JPanel {
     
     private MusicGroup mg;
     private EditMusicGroupForm emgf;
+    private final EntityManager em;
     
     public ListMusicGroupForm() {
-        initComponents();
-        if (!Beans.isDesignTime()) {
+        em = DBManager.em;
+        if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
-        }
+        initComponents();
     }
 
     /**
@@ -31,7 +33,6 @@ public class ListMusicGroupForm extends JPanel {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
         query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT m FROM MusicGroup m");
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
@@ -313,7 +314,6 @@ public class ListMusicGroupForm extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
-    private javax.persistence.EntityManager em;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTable jTable1;
