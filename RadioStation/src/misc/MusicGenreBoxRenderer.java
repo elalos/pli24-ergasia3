@@ -1,4 +1,4 @@
-package scripts;
+package misc;
 
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;

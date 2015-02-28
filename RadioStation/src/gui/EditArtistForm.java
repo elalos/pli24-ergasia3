@@ -1,15 +1,17 @@
 package gui;
 
-import scripts.MyWindowEvent;
+import misc.MyWindowEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.persistence.EntityManager;
+import misc.DBManager;
 import pojos.Artist;
-
 
 public class EditArtistForm extends javax.swing.JFrame {
     
     private Artist artist1;
     private boolean readOnly;
+    private EntityManager em;
 
     /**
      * Creates new form EditArtistForm
@@ -21,7 +23,7 @@ public class EditArtistForm extends javax.swing.JFrame {
     public EditArtistForm(Artist a, boolean readOnly) {
         artist1 = a;
         this.readOnly = readOnly;
-        em = javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
         initComponents(); 
@@ -36,11 +38,10 @@ public class EditArtistForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
         artist2 = artist1;
         musicGenreQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT g FROM MusicGenre g");
         musicGenreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : musicGenreQuery.getResultList();
-        musicGenreBoxRenderer1 = new scripts.MusicGenreBoxRenderer();
+        musicGenreBoxRenderer1 = new misc.MusicGenreBoxRenderer();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -304,7 +305,6 @@ public class EditArtistForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private pojos.Artist artist2;
-    private javax.persistence.EntityManager em;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;
@@ -322,7 +322,7 @@ public class EditArtistForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
-    private scripts.MusicGenreBoxRenderer musicGenreBoxRenderer1;
+    private misc.MusicGenreBoxRenderer musicGenreBoxRenderer1;
     private java.util.List<pojos.MusicGenre> musicGenreList;
     private javax.persistence.Query musicGenreQuery;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;

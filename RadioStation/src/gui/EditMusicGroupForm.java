@@ -2,13 +2,16 @@ package gui;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.persistence.EntityManager;
+import misc.DBManager;
 import pojos.MusicGroup;
-import scripts.MyWindowEvent;
+import misc.MyWindowEvent;
 
 public class EditMusicGroupForm extends javax.swing.JFrame {
 
     private MusicGroup musicGroup1;
     private boolean readOnly;
+    private EntityManager em;
     
     /**
      * Creates new form EditMusicGroupForm
@@ -20,7 +23,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     public EditMusicGroupForm(MusicGroup mg, boolean readOnly) {
         musicGroup1 = mg;
         this.readOnly = readOnly;
-        em = javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
+        em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
         initComponents(); 
@@ -36,8 +39,9 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        em = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("RadioStationPU").createEntityManager();
         musicGroup2 = musicGroup1;
+        artistQuery = em.createQuery("SELECT a FROM MusicGroupArtist a WHERE a.musicgroupid=:musicgroup").setParameter("musicgroup",musicGroup2);
+        artistList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(artistQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -97,17 +101,18 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Λίστα Καλλιτεχνών");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "null"
-            }
-        ));
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, artistList, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artistid.artisticname}"));
+        columnBinding.setColumnName("Καλλιτεχνικό όνομα");
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artistid.lastname}"));
+        columnBinding.setColumnName("Επώνυμο");
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${artistid.firstname}"));
+        columnBinding.setColumnName("Όνομα");
+        columnBinding.setEditable(false);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
 
         jButton3.setText("Εισαγωγή Καλλιτέχνη");
@@ -259,7 +264,8 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.persistence.EntityManager em;
+    private java.util.List artistList;
+    private javax.persistence.Query artistQuery;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
