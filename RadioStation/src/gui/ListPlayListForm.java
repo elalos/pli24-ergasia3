@@ -140,34 +140,15 @@ public class ListPlayListForm extends JPanel {
 
     @SuppressWarnings("unchecked")
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        em.getTransaction().rollback();
-        em.getTransaction().begin();
-        java.util.Collection data = query1.getResultList();
-        for (Object entity : data) {
-            em.refresh(entity);
-        }
-        list1.clear();
-        list1.addAll(data);
+        
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        int[] selected = jTable1.getSelectedRows();
-        List<pojos.PlayList> toRemove = new ArrayList<pojos.PlayList>(selected.length);
-        for (int idx = 0; idx < selected.length; idx++) {
-            pojos.PlayList p = list1.get(jTable1.convertRowIndexToModel(selected[idx]));
-            toRemove.add(p);
-            em.remove(p);
-        }
-        list1.removeAll(toRemove);
+        
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        pojos.PlayList p = new pojos.PlayList();
-        em.persist(p);
-        list1.add(p);
-        int row = list1.size() - 1;
-        jTable1.setRowSelectionInterval(row, row);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));
+        
     }//GEN-LAST:event_newButtonActionPerformed
     
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
