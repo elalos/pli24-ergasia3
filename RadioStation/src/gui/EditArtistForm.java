@@ -62,7 +62,7 @@ public class EditArtistForm extends javax.swing.JFrame {
 
         myRenderer1.setText("renderer1");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jButton1.setText("Αποθήκευση");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

@@ -15,6 +15,7 @@ public class ListMusicGroupForm extends JPanel {
     private MusicGroup mg;
     private EditMusicGroupForm emgf;
     private final EntityManager em;
+    private JFrame thisFrame;
     
     public ListMusicGroupForm() {
         em = DBManager.em;
@@ -146,7 +147,10 @@ public class ListMusicGroupForm extends JPanel {
         int row = jTable1.getSelectedRow();
         mg = list1.get(row);
         emgf = new EditMusicGroupForm(mg, false);
+        emgf.setTitle("Ενημέρωση συγκροτήματος");
         emgf.setVisible(true);
+        thisFrame = (JFrame)this.getRootPane().getParent();
+        thisFrame.setEnabled(false);
         
         emgf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -157,8 +161,10 @@ public class ListMusicGroupForm extends JPanel {
                     list1.set(row, mg);
                     jTable1.setRowSelectionInterval(row, row);
                     jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
                 }
                 else {
+                    thisFrame.setEnabled(true);
                     em.getTransaction().rollback();
                     em.getTransaction().begin();
                     java.util.Collection data = query1.getResultList();
@@ -199,7 +205,10 @@ public class ListMusicGroupForm extends JPanel {
         int row = jTable1.getSelectedRow();
         mg = list1.get(row);
         emgf = new EditMusicGroupForm(mg, false);
+        emgf.setTitle("Διαγραφή συγκροτήματος");
         emgf.setVisible(true);
+        thisFrame = (JFrame)this.getRootPane().getParent();
+        thisFrame.setEnabled(false);
         
         emgf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -209,10 +218,10 @@ public class ListMusicGroupForm extends JPanel {
                     em.getTransaction().commit();
                     em.getTransaction().begin();
                     list1.remove(row);
-                    //jTable1.setRowSelectionInterval(row, row);
-                    //jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
                 }
                 else {
+                    thisFrame.setEnabled(true);
                     em.getTransaction().rollback();
                     em.getTransaction().begin();
                     java.util.Collection data = query1.getResultList();
@@ -253,7 +262,10 @@ public class ListMusicGroupForm extends JPanel {
         mg = new MusicGroup();
         em.persist(mg);
         emgf = new EditMusicGroupForm(mg, false);
+        emgf.setTitle("Εισαγωγή νέου συγκροτήματος");
         emgf.setVisible(true);
+        thisFrame = (JFrame)this.getRootPane().getParent();
+        thisFrame.setEnabled(false);
         
         emgf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -262,22 +274,23 @@ public class ListMusicGroupForm extends JPanel {
                     em.getTransaction().commit();
                     em.getTransaction().begin();
                     list1.add(mg);
-                    int row = list1.size() - 1;
-                    
+                    int row = list1.size() - 1;                    
                     jTable1.setRowSelectionInterval(row, row);
                     jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
                 }
                 else {
+                    thisFrame.setEnabled(true);
                     em.getTransaction().rollback();
                     em.getTransaction().begin();
                     java.util.Collection data = query1.getResultList();
                     for (Object entity : data) 
                         em.refresh(entity);
                     list1.clear();
-                    list1.addAll(data);
-                        
+                    list1.addAll(data);                        
                 }
             }
+            
             public void windowActivated(WindowEvent arg0) {
                 System.out.println("Window Activated");
             }
@@ -306,8 +319,8 @@ public class ListMusicGroupForm extends JPanel {
     
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         this.setVisible(false);
-        // this.getParent().jMenu1.setEnabled(true);    
-        this.getParent().remove(this);
+        getRootPane().getJMenuBar().getComponent(0).setEnabled(true); 
+        getRootPane().getParent().remove(this);
     }//GEN-LAST:event_exitButtonActionPerformed
 
 

@@ -74,7 +74,7 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
 
         myRenderer1.setText("renderer1");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -278,12 +278,18 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         song = new Song();
         albumSong.setSongid(song);
         albumSong.setAlbumid(album1);
-        em.persist(albumSong);
-        em.persist(song);
-        songList.add(albumSong);
-        int row = songList.size() - 1;
-        jTable1.setRowSelectionInterval(row, row);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));   
+        if (1 == 1) {
+            em.persist(albumSong);
+            em.persist(song);
+            songList.add(albumSong);
+            int row = songList.size() - 1;
+            jTable1.setRowSelectionInterval(row, row);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));  
+        }
+        else {
+            String message = "Μήνυμα λάθους!";
+            JOptionPane.showMessageDialog(this, message);
+        }         
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
