@@ -4,6 +4,9 @@ import misc.MyWindowEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import misc.DBManager;
 import pojos.Artist;
 
@@ -27,7 +30,17 @@ public class EditArtistForm extends javax.swing.JFrame {
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
         initComponents(); 
+        
+        // Διαμόρφωση φόρμας διαγραφής
+         if (readOnly == true) {
+            for (int i = 0 ; i < getContentPane().getComponentCount() ; i++) {
+                if (getContentPane().getComponent(i) instanceof JTextField) 
+                    getContentPane().getComponent(i).setFocusable(false);
+            }
+            saveButton.setText("Διαγραφή");
+        }
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -42,8 +55,8 @@ public class EditArtistForm extends javax.swing.JFrame {
         musicGenreQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT g FROM MusicGenre g");
         musicGenreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : musicGenreQuery.getResultList();
         myRenderer1 = new misc.MyRenderer();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -64,17 +77,17 @@ public class EditArtistForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jButton1.setText("Αποθήκευση");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        saveButton.setText("Αποθήκευση");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                saveButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Ακύρωση");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        cancelButton.setText("Ακύρωση");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                cancelButtonActionPerformed(evt);
             }
         });
 
@@ -162,9 +175,9 @@ public class EditArtistForm extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addComponent(jButton1)
+                .addComponent(saveButton)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(cancelButton)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -224,8 +237,8 @@ public class EditArtistForm extends javax.swing.JFrame {
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(saveButton)
+                    .addComponent(cancelButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -235,19 +248,19 @@ public class EditArtistForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
         for (WindowListener l : this.getWindowListeners())
             l.windowClosed(we);
         this.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
         for (WindowListener l : this.getWindowListeners())
             l.windowClosed(we);
         this.setVisible(false);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
@@ -306,8 +319,7 @@ public class EditArtistForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private pojos.Artist artist2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
@@ -326,6 +338,7 @@ public class EditArtistForm extends javax.swing.JFrame {
     private java.util.List<pojos.MusicGenre> musicGenreList;
     private javax.persistence.Query musicGenreQuery;
     private misc.MyRenderer myRenderer1;
+    private javax.swing.JButton saveButton;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

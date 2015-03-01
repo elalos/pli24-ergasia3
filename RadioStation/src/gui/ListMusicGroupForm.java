@@ -204,7 +204,7 @@ public class ListMusicGroupForm extends JPanel {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         mg = list1.get(row);
-        emgf = new EditMusicGroupForm(mg, false);
+        emgf = new EditMusicGroupForm(mg, true);
         emgf.setTitle("Διαγραφή συγκροτήματος");
         emgf.setVisible(true);
         thisFrame = (JFrame)this.getRootPane().getParent();
