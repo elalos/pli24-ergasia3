@@ -115,14 +115,14 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
 
-        jButton3.setText("Εισαγωγή Καλλιτέχνη");
+        jButton3.setText("Εισαγωγή καλλιτέχνη");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Διαγραφή Καλλιτέχνη");
+        jButton4.setText("Διαγραφή καλλιτέχνη");
 
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), jButton4, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);

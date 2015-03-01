@@ -1,16 +1,26 @@
 package gui;
 
 import java.awt.EventQueue;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import misc.DBManager;
+import misc.MyWindowEvent;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import pojos.PlayList;
 
 public class ListPlayListForm extends JPanel {
     
     private final EntityManager em;
+    private EditPlayListForm eplf;
+    private PlayList pl;
     
     public ListPlayListForm() {
         em = DBManager.em;
@@ -38,6 +48,8 @@ public class ListPlayListForm extends JPanel {
         newButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        exportButton = new javax.swing.JButton();
+        importButton = new javax.swing.JButton();
 
         FormListener formListener = new FormListener();
 
@@ -74,6 +86,11 @@ public class ListPlayListForm extends JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Λίστες Τραγουδιών");
 
+        exportButton.setText("Εξαγωγή Λίστας σε αρχείο XML");
+        exportButton.addActionListener(formListener);
+
+        importButton.setText("Εισαγωγή Λίστας από αρχείο XML");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -82,15 +99,21 @@ public class ListPlayListForm extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
+                    .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(newButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exitButton)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(newButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(deleteButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(editButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(exitButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(exportButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(importButton)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -105,6 +128,10 @@ public class ListPlayListForm extends JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(masterScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportButton)
+                    .addComponent(importButton))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exitButton)
                     .addComponent(editButton)
@@ -133,6 +160,9 @@ public class ListPlayListForm extends JPanel {
             else if (evt.getSource() == deleteButton) {
                 ListPlayListForm.this.deleteButtonActionPerformed(evt);
             }
+            else if (evt.getSource() == exportButton) {
+                ListPlayListForm.this.exportButtonActionPerformed(evt);
+            }
         }
     }// </editor-fold>//GEN-END:initComponents
 
@@ -140,36 +170,168 @@ public class ListPlayListForm extends JPanel {
 
     @SuppressWarnings("unchecked")
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        int row = jTable1.getSelectedRow();
+        pl = (PlayList)list1.get(row);
+        eplf = new EditPlayListForm(pl, false);
+        eplf.setVisible(true);
         
+        eplf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.set(row, pl);
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        int row = jTable1.getSelectedRow();
+        pl = (PlayList)list1.get(row);
+        eplf = new EditPlayListForm(pl, false);
+        eplf.setVisible(true);
         
+        eplf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.remove(pl);
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.remove(row);
+                    //jTable1.setRowSelectionInterval(row, row);
+                    //jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        pl = new PlayList();
+        em.persist(pl);
+        eplf = new EditPlayListForm(pl, false);
+        eplf.setVisible(true);
         
-    }//GEN-LAST:event_newButtonActionPerformed
-    
-    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        setVisible(false);
-        //(JFrame)this.getRootPane().getParent().jMenu1.setEnabled(true);
-        getRootPane().getParent().remove(this);
-    }//GEN-LAST:event_exitButtonActionPerformed
+        eplf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                    list1.add(pl);
+                    int row = list1.size() - 1;
+                    
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                }
+                else {
+                    em.getTransaction().rollback();
+                    em.getTransaction().begin();
+                    java.util.Collection data = query1.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    list1.clear();
+                    list1.addAll(data);
+                        
+                }
+            }
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
 
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton deleteButton;
-    private javax.swing.JButton editButton;
-    private javax.swing.JButton exitButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JTable jTable1;
-    private java.util.List<pojos.PlayList> list1;
-    private javax.swing.JScrollPane masterScrollPane;
-    private javax.swing.JButton newButton;
-    private javax.persistence.Query query1;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
-    // End of variables declaration//GEN-END:variables
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
+    }                                         
+                                     
+               
     public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -184,13 +346,13 @@ public class ListPlayListForm extends JPanel {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ListPlayListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListMusicGroupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ListPlayListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListMusicGroupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ListPlayListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListMusicGroupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ListPlayListForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListMusicGroupForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -198,12 +360,49 @@ public class ListPlayListForm extends JPanel {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame();
-                frame.setContentPane(new ListPlayListForm());
+                frame.setContentPane(new ListMusicGroupForm());
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setVisible(true);
             }
         });
-    }
+    }//GEN-LAST:event_newButtonActionPerformed
+    
+    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        setVisible(false);
+        //(JFrame)this.getRootPane().getParent().jMenu1.setEnabled(true);
+        getRootPane().getParent().remove(this);
+    }//GEN-LAST:event_exitButtonActionPerformed
+
+    private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+        try {
+            DocumentBuilderFactory docFactory =
+                    DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = 
+                    docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Element rootElement = doc.createElement("playlist");
+            doc.appendChild(rootElement);
+            } catch (ParserConfigurationException pce) {
+                pce.printStackTrace();
+            } 
+
+    }//GEN-LAST:event_exportButtonActionPerformed
+    
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteButton;
+    private javax.swing.JButton editButton;
+    private javax.swing.JButton exitButton;
+    private javax.swing.JButton exportButton;
+    private javax.swing.JButton importButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTable jTable1;
+    private java.util.List list1;
+    private javax.swing.JScrollPane masterScrollPane;
+    private javax.swing.JButton newButton;
+    private javax.persistence.Query query1;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
+    // End of variables declaration//GEN-END:variables
     
 }

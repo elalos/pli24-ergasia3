@@ -41,7 +41,7 @@ public class EditArtistForm extends javax.swing.JFrame {
         artist2 = artist1;
         musicGenreQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT g FROM MusicGenre g");
         musicGenreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : musicGenreQuery.getResultList();
-        musicGenreBoxRenderer1 = new misc.MusicGenreBoxRenderer();
+        myRenderer1 = new misc.MyRenderer();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -60,7 +60,7 @@ public class EditArtistForm extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jComboBox2 = new javax.swing.JComboBox();
 
-        musicGenreBoxRenderer1.setText("musicGenreBoxRenderer1");
+        myRenderer1.setText("renderer1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -112,6 +112,7 @@ public class EditArtistForm extends javax.swing.JFrame {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Άντρας", "Γυναίκα" }));
 
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, artist2, org.jdesktop.beansbinding.ELProperty.create("${sex}"), jComboBox1, org.jdesktop.beansbinding.BeanProperty.create("selectedItem"));
+        binding.setSourceNullValue("Άντρας");
         bindingGroup.addBinding(binding);
 
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -141,7 +142,7 @@ public class EditArtistForm extends javax.swing.JFrame {
             }
         });
 
-        jComboBox2.setRenderer(musicGenreBoxRenderer1);
+        jComboBox2.setRenderer(myRenderer1);
 
         org.jdesktop.swingbinding.JComboBoxBinding jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, musicGenreList, jComboBox2);
         bindingGroup.addBinding(jComboBoxBinding);
@@ -322,9 +323,9 @@ public class EditArtistForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
-    private misc.MusicGenreBoxRenderer musicGenreBoxRenderer1;
     private java.util.List<pojos.MusicGenre> musicGenreList;
     private javax.persistence.Query musicGenreQuery;
+    private misc.MyRenderer myRenderer1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
