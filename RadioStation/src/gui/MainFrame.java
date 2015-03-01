@@ -109,7 +109,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListMusicGroupForm lmgf = new ListMusicGroupForm();
         
-        //jMenu1.setEnabled(false);
+        jMenu1.setEnabled(false);
         
         add(lmgf, BorderLayout.CENTER);
         
@@ -125,7 +125,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListArtistForm laf = new ListArtistForm();
         
-        //jMenu1.setEnabled(false);
+        jMenu1.setEnabled(false);
         
         add(laf,BorderLayout.CENTER);
         
@@ -136,7 +136,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListMusicGroupAlbumForm lmgaf = new ListMusicGroupAlbumForm();
         
-        //jMenu1.setEnabled(false);
+        jMenu1.setEnabled(false);
         
         add(lmgaf,BorderLayout.CENTER);
         
@@ -147,7 +147,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListArtistAlbumForm laaf = new ListArtistAlbumForm();
         
-        //jMenu1.setEnabled(false);
+        jMenu1.setEnabled(false);
         
         add(laaf,BorderLayout.CENTER);
         
@@ -158,13 +158,13 @@ public class MainFrame extends javax.swing.JFrame {
         
         ListPlayListForm lplf = new ListPlayListForm();
         
-        //jMenu1.setEnabled(false);
+        jMenu1.setEnabled(false);
         
         add(lplf,BorderLayout.CENTER);
-               
+  
         pack();       
     }//GEN-LAST:event_jMenuItem5ActionPerformed
-
+   
     /**
      * @param args the command line arguments
      */

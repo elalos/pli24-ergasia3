@@ -15,6 +15,7 @@ public class ListMusicGroupAlbumForm extends JPanel {
     private final EntityManager em;
     private Album a;
     private EditMusicGroupAlbumForm emgaf;
+    private JFrame thisFrame;
     
     public ListMusicGroupAlbumForm() {
         em = DBManager.em;
@@ -151,7 +152,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
         int row = jTable1.getSelectedRow();
         a = list1.get(row);
         emgaf = new EditMusicGroupAlbumForm(a, false);
+        emgaf.setTitle("Ενημέρωση άλμπουμ συγκροτήματος");
         emgaf.setVisible(true);
+        thisFrame = (JFrame)this.getRootPane().getParent();
+        thisFrame.setEnabled(false);
         
         emgaf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -162,8 +166,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
                     list1.set(row, a);
                     jTable1.setRowSelectionInterval(row, row);
                     jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
                 }
                 else {
+                    thisFrame.setEnabled(true);
                     em.getTransaction().rollback();
                     em.getTransaction().begin();
                     java.util.Collection data = query1.getResultList();
@@ -204,7 +210,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
         int row = jTable1.getSelectedRow();
         a = list1.get(row);
         emgaf = new EditMusicGroupAlbumForm(a, false);
+        emgaf.setTitle("Διαγραφή άλμπουμ συγκροτήματος");
         emgaf.setVisible(true);
+        thisFrame = (JFrame)this.getRootPane().getParent();
+        thisFrame.setEnabled(false);
         
         emgaf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -214,10 +223,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
                     em.getTransaction().commit();
                     em.getTransaction().begin();
                     list1.remove(row);
-                    //jTable1.setRowSelectionInterval(row, row);
-                    //jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
                 }
                 else {
+                    thisFrame.setEnabled(true);
                     em.getTransaction().rollback();
                     em.getTransaction().begin();
                     java.util.Collection data = query1.getResultList();
@@ -258,7 +267,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
         a = new Album();
         em.persist(a);
         emgaf = new EditMusicGroupAlbumForm(a, false);
+        emgaf.setTitle("Εισαγωγή νέου άλμπουμ συγκροτήματος");
         emgaf.setVisible(true);
+        thisFrame = (JFrame)this.getRootPane().getParent();
+        thisFrame.setEnabled(false);
         
         emgaf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
@@ -267,12 +279,13 @@ public class ListMusicGroupAlbumForm extends JPanel {
                     em.getTransaction().commit();
                     em.getTransaction().begin();
                     list1.add(a);
-                    int row = list1.size() - 1;
-                    
+                    int row = list1.size() - 1;                    
                     jTable1.setRowSelectionInterval(row, row);
                     jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
                 }
                 else {
+                    thisFrame.setEnabled(true);
                     em.getTransaction().rollback();
                     em.getTransaction().begin();
                     java.util.Collection data = query1.getResultList();
@@ -311,8 +324,8 @@ public class ListMusicGroupAlbumForm extends JPanel {
     
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         this.setVisible(false);
-        // this.getParent().jMenu1.setEnabled(true);
-        this.getParent().remove(this);
+        getRootPane().getJMenuBar().getComponent(0).setEnabled(true); 
+        getRootPane().getParent().remove(this);
     }//GEN-LAST:event_exitButtonActionPerformed
 
 
