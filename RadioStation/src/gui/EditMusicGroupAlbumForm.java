@@ -3,7 +3,10 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import misc.DBManager;
 import misc.MyWindowEvent;
 import pojos.Album;
@@ -31,6 +34,17 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
         initComponents(); 
+        
+        // Διαμόρφωση φόρμας διαγραφής
+         if (readOnly == true) {
+            for (int i = 0 ; i < getContentPane().getComponentCount() ; i++) {
+                if (getContentPane().getComponent(i) instanceof JTextField) 
+                    getContentPane().getComponent(i).setFocusable(false);
+            }
+            remove(newButton);
+            remove(deleteButton);
+            saveButton.setText("Διαγραφή");
+        }
     }
     
     /**
@@ -58,10 +72,10 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        newButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -108,35 +122,35 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
 
-        jButton3.setText("Εισαγωγή τραγουδιού");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        newButton.setText("Εισαγωγή τραγουδιού");
+        newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                newButtonActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Διαγραφή τραγουδιού");
+        deleteButton.setText("Διαγραφή τραγουδιού");
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), jButton4, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jTable1, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                deleteButtonActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Αποθήκευση");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        saveButton.setText("Αποθήκευση");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                saveButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Ακύρωση");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        cancelButton.setText("Ακύρωση");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                cancelButtonActionPerformed(evt);
             }
         });
 
@@ -192,13 +206,13 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(saveButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2))
+                                .addComponent(cancelButton))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton3)
+                                .addComponent(newButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4))
+                                .addComponent(deleteButton))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel4)
@@ -254,12 +268,12 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(newButton)
+                    .addComponent(deleteButton))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(saveButton)
+                    .addComponent(cancelButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -273,7 +287,7 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         albumSong = new AlbumSong();
         song = new Song();
         albumSong.setSongid(song);
@@ -290,16 +304,16 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
             String message = "Μήνυμα λάθους!";
             JOptionPane.showMessageDialog(this, message);
         }         
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_newButtonActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         albumSong = (AlbumSong)songList.get(row);    
         em.remove(albumSong);
         songList.remove(row);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_deleteButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if (songList.size() >= 1) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
             for (WindowListener l : this.getWindowListeners())
@@ -309,14 +323,14 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
             String message = "Το άλμπουμ πρέπει να περιέχει τουλάχιστον ένα τραγούδι!";
             JOptionPane.showMessageDialog(this, message);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
         for (WindowListener l : this.getWindowListeners())
         l.windowClosed(we);
         this.setVisible(false);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
@@ -359,10 +373,8 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private pojos.Album album2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton deleteButton;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
@@ -384,6 +396,8 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
     private java.util.List musicProductionCompanyList;
     private javax.persistence.Query musicProductionCompanyQuery;
     private misc.MyRenderer myRenderer1;
+    private javax.swing.JButton newButton;
+    private javax.swing.JButton saveButton;
     private java.util.List songList;
     private javax.persistence.Query songQuery;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;

@@ -209,7 +209,7 @@ public class ListMusicGroupAlbumForm extends JPanel {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         a = list1.get(row);
-        emgaf = new EditMusicGroupAlbumForm(a, false);
+        emgaf = new EditMusicGroupAlbumForm(a, true);
         emgaf.setTitle("Διαγραφή άλμπουμ συγκροτήματος");
         emgaf.setVisible(true);
         thisFrame = (JFrame)this.getRootPane().getParent();

@@ -231,8 +231,8 @@ public class ListPlayListForm extends JPanel {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         pl = (PlayList)list1.get(row);
-        eplf = new EditPlayListForm(pl, false);
-        eplf.setTitle("Διαγραφή λίστας τραγουδιών");
+        eplf = new EditPlayListForm(pl, true);
+        eplf.setTitle("Διαγραφή λίστας τραγουδιών");        
         eplf.setVisible(true);
         thisFrame = (JFrame)this.getRootPane().getParent();
         thisFrame.setEnabled(false);
