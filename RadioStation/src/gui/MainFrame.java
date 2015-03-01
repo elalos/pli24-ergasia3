@@ -161,7 +161,7 @@ public class MainFrame extends javax.swing.JFrame {
         //jMenu1.setEnabled(false);
         
         add(lplf,BorderLayout.CENTER);
-        
+               
         pack();       
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 

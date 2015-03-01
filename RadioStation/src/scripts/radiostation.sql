@@ -119,3 +119,9 @@ INSERT INTO MusicProductionCompany VALUES
     (DEFAULT, 'Capitol Records, Inc.', '1750 N. Vine Street, Hollywood, California 90028', '555-12345'),
     (DEFAULT, 'Warner Music Group Corp.', '75 Rockefeller Plz. Bsmt. 1, New York NY 10019-6990', '212-275-2000'),
     (DEFAULT, 'ATCO Records', '1290 Avenue of the Americas, New York, NY 10104, USA', '(800) 546-3670' );
+
+
+/* Aλλαγές στους πίνακες */
+
+ALTER TABLE Album ALTER diskNumber DEFAULT 1;
+ALTER TABLE PlayList ADD COLUMN creationDate VARCHAR(10);

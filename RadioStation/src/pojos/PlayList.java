@@ -1,7 +1,6 @@
 package pojos;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,10 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "PLAYLIST")
@@ -21,7 +18,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "PlayList.findAll", query = "SELECT p FROM PlayList p"),
     @NamedQuery(name = "PlayList.findByPlaylistid", query = "SELECT p FROM PlayList p WHERE p.playlistid = :playlistid"),
-    @NamedQuery(name = "PlayList.findByName", query = "SELECT p FROM PlayList p WHERE p.name = :name")})
+    @NamedQuery(name = "PlayList.findByName", query = "SELECT p FROM PlayList p WHERE p.name = :name"),
+    @NamedQuery(name = "PlayList.findByCreationdate", query = "SELECT p FROM PlayList p WHERE p.creationdate = :creationdate")})
 public class PlayList implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -31,8 +29,8 @@ public class PlayList implements Serializable {
     private Long playlistid;
     @Column(name = "NAME")
     private String name;
-    @OneToMany(mappedBy = "playlistid")
-    private List<PlayListSong> playListSongList;
+    @Column(name = "CREATIONDATE")
+    private String creationdate;
 
     public PlayList() {
     }
@@ -57,13 +55,12 @@ public class PlayList implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
-    public List<PlayListSong> getPlayListSongList() {
-        return playListSongList;
+    public String getCreationdate() {
+        return creationdate;
     }
 
-    public void setPlayListSongList(List<PlayListSong> playListSongList) {
-        this.playListSongList = playListSongList;
+    public void setCreationdate(String creationdate) {
+        this.creationdate = creationdate;
     }
 
     @Override
