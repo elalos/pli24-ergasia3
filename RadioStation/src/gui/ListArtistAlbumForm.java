@@ -157,6 +157,8 @@ public class ListArtistAlbumForm extends JPanel {
     
 
     @SuppressWarnings("unchecked")
+    
+    //Δημιουργία μεθόδου για πάτημα κουμπιού EDIT
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         int row = jTable1.getSelectedRow();
         a = list1.get(row);
@@ -169,6 +171,8 @@ public class ListArtistAlbumForm extends JPanel {
         eaaf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
+                
+                //ΑΜΥΝΤΙΚΟΣ ΠΡΟΓ/ΜΟΣ ΓΙΑ ΝΑ ΓΙΝΕΙ ΑΝΕΝΕΡΓΗ Η ΑΡΧΙΚΗ ΦΟΡΜΑ, ΚΑΙ ΑΝΤΙΘΕΤΑ
                 if (((MyWindowEvent)arg0).exitAndSave) {
                     em.getTransaction().commit();
                     em.getTransaction().begin();
@@ -215,6 +219,7 @@ public class ListArtistAlbumForm extends JPanel {
         });
     }//GEN-LAST:event_editButtonActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         a = list1.get(row);
@@ -227,6 +232,8 @@ public class ListArtistAlbumForm extends JPanel {
         eaaf.addWindowListener(new WindowListener() {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
+                
+                //ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ
                 if (((MyWindowEvent)arg0).exitAndSave) {
                     em.remove(a);
                     em.getTransaction().commit();
@@ -272,6 +279,7 @@ public class ListArtistAlbumForm extends JPanel {
         });
     }//GEN-LAST:event_deleteButtonActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού NEW
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         a = new Album();
         em.persist(a);
@@ -331,6 +339,7 @@ public class ListArtistAlbumForm extends JPanel {
         });
     }//GEN-LAST:event_newButtonActionPerformed
     
+    //Δημιουργία μεθόδου για πάτημα κουμπιού EXIT
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         this.setVisible(false);
         getRootPane().getJMenuBar().getComponent(0).setEnabled(true); 

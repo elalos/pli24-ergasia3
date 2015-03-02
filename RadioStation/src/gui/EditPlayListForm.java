@@ -223,6 +223,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+//Δημιουργία μεθόδου για πάτημα κουμπιού NEW
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         playListSong = new PlayListSong();
         song = new Song();
@@ -236,6 +237,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
         jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));          
     }//GEN-LAST:event_newButtonActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         playListSong = (PlayListSong)songList.get(row);    
@@ -243,11 +245,13 @@ public class EditPlayListForm extends javax.swing.JFrame {
         songList.remove(row);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         
         // Yπολογισμός διάρκειας λίστας
         cnt = 1800;
         
+// ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΔΙΑΡΚΕΙΑ ΛΙΣΤΑΣ ΜΙΣΗΣ ΩΡΑΣ
         if (cnt >= 1800) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
             for (WindowListener l : this.getWindowListeners())
@@ -259,6 +263,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού CANCEL
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
         for (WindowListener l : this.getWindowListeners())
