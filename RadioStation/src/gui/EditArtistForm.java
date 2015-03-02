@@ -1,5 +1,5 @@
 package gui;
-
+//ΟΙ ΑΠΑΡΑΙΤΗΤΕΣ ΕΙΣΑΓΩΓΕΣ
 import misc.MyWindowEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -248,6 +248,7 @@ public class EditArtistForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
         for (WindowListener l : this.getWindowListeners())
@@ -255,6 +256,7 @@ public class EditArtistForm extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού CANCEL
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
         for (WindowListener l : this.getWindowListeners())
