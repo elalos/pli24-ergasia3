@@ -1,5 +1,5 @@
 package gui;
-
+// ΟΛΕΣ ΟΙ ΑΠΑΡΑΙΤΗΤΕΣ ΕΙΣΑΓΩΓΕΣ
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
@@ -12,6 +12,8 @@ import misc.MyWindowEvent;
 import pojos.Album;
 import pojos.AlbumSong;
 import pojos.Song;
+
+//Δημιουργία ΚΛΑΣΣΗΣ EditArtistAlbumForm
 
 public class EditArtistAlbumForm extends javax.swing.JFrame {
     
@@ -288,6 +290,7 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    //Δημιουργία μεθόδου για πάτημα κουμπιού NEW
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         albumSong = new AlbumSong();
         song = new Song();
@@ -301,6 +304,7 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
         jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));          
     }//GEN-LAST:event_newButtonActionPerformed
 
+//Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         albumSong = (AlbumSong)songList.get(row);    
@@ -308,6 +312,7 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
         songList.remove(row);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
+//Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if (songList.size() >= 1) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
@@ -320,6 +325,7 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
+//Δημιουργία μεθόδου για πάτημα κουμπιού CANCEL
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
         for (WindowListener l : this.getWindowListeners())
@@ -334,6 +340,7 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    //Δημιουργία μεθόδου MAIN
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
