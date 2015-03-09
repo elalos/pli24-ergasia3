@@ -227,9 +227,12 @@ public class ListMusicGroupForm extends JPanel {
                 public void windowClosed(WindowEvent arg0) {
                     System.out.println("Window close event occur");
                     if (((MyWindowEvent)arg0).exitAndSave) {
+                        
+                        // Διαγραφή καταχωρήσεων του συγκροτήματος από MusicGroupArtist
                         for (Object o : musicGroupArtistList) 
-                        if (((MusicGroupArtist)o).getMusicgroupid().equals(mg))
-                            em.remove(o);
+                            if (((MusicGroupArtist)o).getMusicgroupid().equals(mg))
+                                em.remove(o);
+                        
                         em.remove(mg);
                         em.getTransaction().commit();
                         em.getTransaction().begin();

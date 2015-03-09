@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import misc.DBManager;
 import misc.MyWindowEvent;
 import pojos.Album;
+import pojos.AlbumSong;
+import pojos.PlayListSong;
 
 public class ListMusicGroupAlbumForm extends JPanel {
     
@@ -36,6 +38,10 @@ public class ListMusicGroupAlbumForm extends JPanel {
 
         query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT a FROM Album a WHERE a.musicgroupid IS NOT NULL");
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
+        albumSongQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT alsong FROM AlbumSong alsong");
+        albumSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumSongQuery.getResultList());
+        playListSongQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT pls FROM PlayListSong pls");
+        playListSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(playListSongQuery.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
@@ -219,6 +225,20 @@ public class ListMusicGroupAlbumForm extends JPanel {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
+                    
+                    // Διαγραφή καταχωρήσεων τραγουδιών του άλμπουμ 
+                    // από AlbumSong και PlayListSong
+                    for (Object o : albumSongList) {
+                        if (((AlbumSong)o).getAlbumid().equals(a)) {
+                           for (Object o2 : playListSongList) {
+                                if (((PlayListSong)o2).getSongid().equals(((AlbumSong)o).getSongid())) {
+                                    em.remove(o2);
+                                }
+                           }
+                           em.remove(o);
+                        }                            
+                    }
+                    
                     em.remove(a);
                     em.getTransaction().commit();
                     em.getTransaction().begin();
@@ -234,6 +254,12 @@ public class ListMusicGroupAlbumForm extends JPanel {
                         em.refresh(entity);
                     list1.clear();
                     list1.addAll(data);
+                    java.util.Collection data2 = albumSongQuery.getResultList();
+                    for (Object entity : data2) 
+                        em.refresh(entity);
+                    java.util.Collection data3 = playListSongQuery.getResultList();
+                    for (Object entity : data3) 
+                        em.refresh(entity);
                         
                 }
             }
@@ -330,6 +356,8 @@ public class ListMusicGroupAlbumForm extends JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.util.List albumSongList;
+    private javax.persistence.Query albumSongQuery;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
     private javax.swing.JButton exitButton;
@@ -338,6 +366,8 @@ public class ListMusicGroupAlbumForm extends JPanel {
     private java.util.List<pojos.Album> list1;
     private javax.swing.JScrollPane masterScrollPane;
     private javax.swing.JButton newButton;
+    private java.util.List playListSongList;
+    private javax.persistence.Query playListSongQuery;
     private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
