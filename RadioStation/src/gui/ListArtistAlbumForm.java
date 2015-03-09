@@ -172,7 +172,6 @@ public class ListArtistAlbumForm extends JPanel {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 
-                //ΑΜΥΝΤΙΚΟΣ ΠΡΟΓ/ΜΟΣ ΓΙΑ ΝΑ ΓΙΝΕΙ ΑΝΕΝΕΡΓΗ Η ΑΡΧΙΚΗ ΦΟΡΜΑ, ΚΑΙ ΑΝΤΙΘΕΤΑ
                 if (((MyWindowEvent)arg0).exitAndSave) {
                     em.getTransaction().commit();
                     em.getTransaction().begin();

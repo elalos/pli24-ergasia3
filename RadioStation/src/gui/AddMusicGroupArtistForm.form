@@ -10,7 +10,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT a FROM Artist a&quot;)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT a FROM Artist a WHERE a.artistid NOT IN :artistlist&quot;).setParameter(&quot;artistlist&quot;,((MusicGroupArtist)musicGroupArtistList).getArtistid())"/>
       </AuxValues>
     </Component>
     <Component class="java.util.List" name="artistList">
