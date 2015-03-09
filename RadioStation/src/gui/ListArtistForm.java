@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import misc.DBManager;
 import pojos.Artist;
@@ -16,6 +17,7 @@ public class ListArtistForm extends JPanel {
     private Artist a;
     private final EntityManager em;
     private JFrame thisFrame;
+    private int check;
     
     public ListArtistForm() {
         em = DBManager.em;
@@ -36,6 +38,10 @@ public class ListArtistForm extends JPanel {
 
         query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT a FROM Artist a");
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
+        albumQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT alb.artistid FROM Album alb");
+        albumList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumQuery.getResultList());
+        musicGroupArtistQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT mga.artistid from MusicGroupArtist mga");
+        musicGroupArtistList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(musicGroupArtistQuery.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
@@ -213,58 +219,69 @@ public class ListArtistForm extends JPanel {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         a = list1.get(row);
-        eaf = new EditArtistForm(a, true);
-        eaf.setTitle("Διαγραφή καλλιτέχνη");
-        eaf.setVisible(true);
-        thisFrame = (JFrame)this.getRootPane().getParent();
-        thisFrame.setEnabled(false);
-        
-        eaf.addWindowListener(new WindowListener() {
-            public void windowClosed(WindowEvent arg0) {
-                System.out.println("Window close event occur");
-                if (((MyWindowEvent)arg0).exitAndSave) {
-                    em.remove(a);
-                    em.getTransaction().commit();
-                    em.getTransaction().begin();
-                    list1.remove(row);
-                    thisFrame.setEnabled(true);
+        // Έλεγχος για δυνατότητα διαγραφής 
+        if (musicGroupArtistList.contains(a)) { // Ο καλλιτέχνης υπάρχει στον πίνακα MusicGroupArtist 
+            String message = "Η διαγραφή είναι αδύνατη, ο καλλιτέχνης είναι μέλος ενός συγκροτήματος!";
+            JOptionPane.showMessageDialog(this, message);
+        }
+        else if (albumList.contains(a)) { // Ο καλλιτέχνης υπάρχει στον πίνακα Album 
+            String message = "Η διαγραφή είναι αδύνατη, ο καλλιτέχνης έχει τουλάχιστον ένα άλμπουμ!";
+            JOptionPane.showMessageDialog(this, message);
+        }
+        else { 
+            eaf = new EditArtistForm(a, true);
+            eaf.setTitle("Διαγραφή καλλιτέχνη");
+            eaf.setVisible(true);
+            thisFrame = (JFrame)this.getRootPane().getParent();
+            thisFrame.setEnabled(false);
+
+            eaf.addWindowListener(new WindowListener() {
+                public void windowClosed(WindowEvent arg0) {
+                    System.out.println("Window close event occur");
+                    if (((MyWindowEvent)arg0).exitAndSave) {
+                            em.remove(a);
+                            em.getTransaction().commit();
+                            em.getTransaction().begin();
+                            list1.remove(row);
+                            thisFrame.setEnabled(true);                  
+                    }
+                    else {
+                        thisFrame.setEnabled(true);
+                        em.getTransaction().rollback();
+                        em.getTransaction().begin();
+                        java.util.Collection data = query1.getResultList();
+                        for (Object entity : data) 
+                            em.refresh(entity);
+                        list1.clear();
+                        list1.addAll(data);
+
+                    }
                 }
-                else {
-                    thisFrame.setEnabled(true);
-                    em.getTransaction().rollback();
-                    em.getTransaction().begin();
-                    java.util.Collection data = query1.getResultList();
-                    for (Object entity : data) 
-                        em.refresh(entity);
-                    list1.clear();
-                    list1.addAll(data);
-                        
+                public void windowActivated(WindowEvent arg0) {
+                    System.out.println("Window Activated");
                 }
-            }
-            public void windowActivated(WindowEvent arg0) {
-                System.out.println("Window Activated");
-            }
 
-            public void windowClosing(WindowEvent arg0) {
-                System.out.println("Window Closing");
-            }
+                public void windowClosing(WindowEvent arg0) {
+                    System.out.println("Window Closing");
+                }
 
-            public void windowDeactivated(WindowEvent arg0) {
-                System.out.println("Window Deactivated");
-            }
+                public void windowDeactivated(WindowEvent arg0) {
+                    System.out.println("Window Deactivated");
+                }
 
-            public void windowDeiconified(WindowEvent arg0) {
-                System.out.println("Window Deiconified");
-            }
+                public void windowDeiconified(WindowEvent arg0) {
+                    System.out.println("Window Deiconified");
+                }
 
-            public void windowIconified(WindowEvent arg0) {
-                System.out.println("Window Iconified");
-            }
+                public void windowIconified(WindowEvent arg0) {
+                    System.out.println("Window Iconified");
+                }
 
-            public void windowOpened(WindowEvent arg0) {
-                System.out.println("Window Opened");
-            }
-        });        
+                public void windowOpened(WindowEvent arg0) {
+                    System.out.println("Window Opened");
+                }
+            });        
+        } 
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
@@ -335,6 +352,8 @@ public class ListArtistForm extends JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.util.List albumList;
+    private javax.persistence.Query albumQuery;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editButton;
     private javax.swing.JButton exitButton;
@@ -342,6 +361,8 @@ public class ListArtistForm extends JPanel {
     private javax.swing.JTable jTable1;
     private java.util.List<pojos.Artist> list1;
     private javax.swing.JScrollPane masterScrollPane;
+    private java.util.List musicGroupArtistList;
+    private javax.persistence.Query musicGroupArtistQuery;
     private javax.swing.JButton newButton;
     private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;

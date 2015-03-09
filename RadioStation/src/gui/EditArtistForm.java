@@ -4,8 +4,6 @@ import misc.MyWindowEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import misc.DBManager;
 import pojos.Artist;

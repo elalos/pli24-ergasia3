@@ -42,6 +42,8 @@ public class ListPlayListForm extends JPanel {
 
         query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT p FROM PlayList p");
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
+        playListSongQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT pls.playlistid FROM PlayListSong pls");
+        playListSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(playListSongQuery.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
@@ -411,9 +413,11 @@ public class ListPlayListForm extends JPanel {
     private javax.swing.JButton importButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTable jTable1;
-    private java.util.List list1;
+    private java.util.List<pojos.PlayList> list1;
     private javax.swing.JScrollPane masterScrollPane;
     private javax.swing.JButton newButton;
+    private java.util.List playListSongList;
+    private javax.persistence.Query playListSongQuery;
     private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables

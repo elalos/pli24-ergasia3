@@ -3,18 +3,22 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import misc.DBManager;
 import pojos.MusicGroup;
 import misc.MyWindowEvent;
+import pojos.MusicGroupArtist;
 
 public class EditMusicGroupForm extends javax.swing.JFrame {
 
     private MusicGroup musicGroup1;
     private boolean readOnly;
     private EntityManager em;
+    private MusicGroupArtist musicGroupArtist;
+    private JFrame thisFrame;
+    private AddMusicGroupArtistForm amgaf;
     
     /**
      * Creates new form EditMusicGroupForm
@@ -222,10 +226,16 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-       MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
-        for (WindowListener l : this.getWindowListeners())
-            l.windowClosed(we);
-        this.setVisible(false);
+       //ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΝΑ ΕΧΕΙ ΤΟΥΛΑΧΙΣΤΟΝ 2 ΚΑΛΛΙΤΕΧΝΕΣ ΤΟ ΓΚΡΟΥΠ
+        if (artistList.size() >= 2) {
+            MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
+            for (WindowListener l : this.getWindowListeners())
+                l.windowClosed(we);
+            this.setVisible(false); } 
+        else {            
+            String message = "Το γκρουπ πρέπει να αποτελείται από δύο ή περισσότερους καλλιτέχνες!";
+            JOptionPane.showMessageDialog(this, message);
+        }
     }//GEN-LAST:event_saveButtonActionPerformed
 
 //Δημιουργία μεθόδου για πάτημα κουμπιού CANCEL
@@ -238,12 +248,64 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού NEW
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        // TODO add your handling code here:
+        musicGroupArtist = new MusicGroupArtist();
+        musicGroupArtist.setMusicgroupid(musicGroup1);
+        em.persist(musicGroupArtist);
+        
+        amgaf = new AddMusicGroupArtistForm(musicGroupArtist);
+        amgaf.setTitle("Επιλογή καλλιτέχνη");
+        amgaf.setVisible(true);
+        thisFrame = this;
+        thisFrame.setEnabled(false);
+        
+        amgaf.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                System.out.println("Window close event occur");
+                if (((MyWindowEvent)arg0).exitAndSave) {
+                    artistList.add(musicGroupArtist.getArtistid());
+                    int row = artistList.size() - 1;                    
+                    jTable1.setRowSelectionInterval(row, row);
+                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                    thisFrame.setEnabled(true);
+                }
+                else {
+                    thisFrame.setEnabled(true);
+                    em.remove(musicGroupArtist);                       
+                }
+            }
+            
+            public void windowActivated(WindowEvent arg0) {
+                System.out.println("Window Activated");
+            }
+
+            public void windowClosing(WindowEvent arg0) {
+                System.out.println("Window Closing");
+            }
+
+            public void windowDeactivated(WindowEvent arg0) {
+                System.out.println("Window Deactivated");
+            }
+
+            public void windowDeiconified(WindowEvent arg0) {
+                System.out.println("Window Deiconified");
+            }
+
+            public void windowIconified(WindowEvent arg0) {
+                System.out.println("Window Iconified");
+            }
+
+            public void windowOpened(WindowEvent arg0) {
+                System.out.println("Window Opened");
+            }
+        });
     }//GEN-LAST:event_newButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
+        int row = jTable1.getSelectedRow();
+        musicGroupArtist = (MusicGroupArtist)artistList.get(row);    
+        em.remove(musicGroupArtist); // διαγραφή καλλιτέχνη από τον πίνακα MusicGroupArtist
+        artistList.remove(row);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     /**

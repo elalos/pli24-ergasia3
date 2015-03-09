@@ -3,9 +3,7 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import misc.DBManager;
 import misc.MyWindowEvent;
@@ -308,7 +306,8 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         albumSong = (AlbumSong)songList.get(row);    
-        em.remove(albumSong);
+        em.remove(albumSong); // διαγραφή τραγουδιού από τον πίνακα AlbumSong
+        em.remove(albumSong.getSongid()); // διαγραφή τραγουδιού από τον πίνακα Song
         songList.remove(row);
     }//GEN-LAST:event_deleteButtonActionPerformed
 

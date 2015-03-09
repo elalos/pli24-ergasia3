@@ -3,9 +3,7 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import misc.DBManager;
 import misc.MyWindowEvent;
@@ -251,7 +249,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
         // Yπολογισμός διάρκειας λίστας
         cnt = 1800;
         
-// ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΔΙΑΡΚΕΙΑ ΛΙΣΤΑΣ ΜΙΣΗΣ ΩΡΑΣ
+        // ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΔΙΑΡΚΕΙΑ ΛΙΣΤΑΣ ΜΙΣΗΣ ΩΡΑΣ
         if (cnt >= 1800) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
             for (WindowListener l : this.getWindowListeners())

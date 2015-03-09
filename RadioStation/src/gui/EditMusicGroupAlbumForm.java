@@ -3,9 +3,7 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import misc.DBManager;
 import misc.MyWindowEvent;
@@ -293,18 +291,20 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         song = new Song();
         albumSong.setSongid(song);
         albumSong.setAlbumid(album1);
+        songList.add(albumSong);
+        int row = songList.size() - 1;
+        jTable1.setRowSelectionInterval(row, row);
+        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true)); 
         if (1 == 1) {
-            em.persist(albumSong);
-            em.persist(song);
-            songList.add(albumSong);
-            int row = songList.size() - 1;
-            jTable1.setRowSelectionInterval(row, row);
-            jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));  
-        }
-        else {
             String message = "Μήνυμα λάθους!";
             JOptionPane.showMessageDialog(this, message);
-        }         
+        }   
+        else {
+            em.persist(albumSong);
+            em.persist(song); 
+ 
+        }
+              
     }//GEN-LAST:event_newButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
@@ -312,14 +312,15 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         albumSong = (AlbumSong)songList.get(row);    
-        em.remove(albumSong);
+        em.remove(albumSong); // διαγραφή τραγουδιού από τον πίνακα AlbumSong
+        em.remove(albumSong.getSongid()); // διαγραφή τραγουδιού από τον πίνακα Song
         songList.remove(row);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         
-//ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΝΑ ΕΧΕΙ ΤΟΥΛΑΧΙΣΤΟΝ 1 ΤΡΑΓΟΥΔΙ ΤΟ ΑΛΜΠΟΥΜ
+        //ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΝΑ ΕΧΕΙ ΤΟΥΛΑΧΙΣΤΟΝ 1 ΤΡΑΓΟΥΔΙ ΤΟ ΑΛΜΠΟΥΜ
         if (songList.size() >= 1) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
             for (WindowListener l : this.getWindowListeners())
