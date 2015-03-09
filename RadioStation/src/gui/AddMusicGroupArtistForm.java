@@ -3,7 +3,6 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import misc.DBManager;
@@ -15,8 +14,8 @@ import pojos.MusicGroupArtist;
 public class AddMusicGroupArtistForm extends javax.swing.JFrame {
 
     private EntityManager em;
-    private MusicGroupArtist musicGroupArtist1;
-    private List musicGroupArtistList;
+    private MusicGroupArtist musicGroupArtist;
+    private List artistsAlreadyInGroup;
     
     /**
      * Creates new form AddPlayListSong
@@ -25,11 +24,20 @@ public class AddMusicGroupArtistForm extends javax.swing.JFrame {
         initComponents();
     }
     
-    public AddMusicGroupArtistForm(MusicGroupArtist mga, List musicGroupArtistList) {
-        musicGroupArtist1 = mga;
-        this.musicGroupArtistList = musicGroupArtistList;
-        Collection artistsAlreadyInGroup = musicGroupArtistList;       
-         
+    public AddMusicGroupArtistForm(MusicGroupArtist musicGroupArtist, List musicGroupArtistList) {
+        this.musicGroupArtist = musicGroupArtist;
+        
+        // Αποθήκευση των <Long>artistid των καλλιτεχνών που 
+        // υπάρχουν ήδη στο γκρουπ σε λίστα
+        artistsAlreadyInGroup = new ArrayList();
+        for (Object o : musicGroupArtistList) {
+            artistsAlreadyInGroup.add(((MusicGroupArtist)o).getArtistid().getArtistid());
+        }
+        
+        // Αντιμετώπιση περίπτωσης η artistsAlreadyInGroup
+        // να είναι άδεια
+        if (artistsAlreadyInGroup.isEmpty()) artistsAlreadyInGroup.add(-1);
+        
         em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
@@ -48,7 +56,7 @@ public class AddMusicGroupArtistForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        artistQuery = em.createQuery("SELECT a FROM Artist a WHERE a.artistid NOT IN :artistlist").setParameter("artistlist",((MusicGroupArtist)musicGroupArtistList).getArtistid());
+        artistQuery = em.createQuery("SELECT a FROM Artist a WHERE a.artistid NOT IN :artistlist").setParameter("artistlist",artistsAlreadyInGroup);
         artistList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(artistQuery.getResultList());
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -132,7 +140,7 @@ public class AddMusicGroupArtistForm extends javax.swing.JFrame {
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
         // Επιλογή καλλιτέχνη
         int row = jTable1.getSelectedRow();
-        musicGroupArtist1.setArtistid((Artist)artistList.get(row));
+        musicGroupArtist.setArtistid((Artist)artistList.get(row));
         
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
         for (WindowListener l : this.getWindowListeners())
