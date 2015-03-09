@@ -295,7 +295,7 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         int row = songList.size() - 1;
         jTable1.setRowSelectionInterval(row, row);
         jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true)); 
-        if (1 == 1) {
+        if (1 == 2) {
             String message = "Μήνυμα λάθους!";
             JOptionPane.showMessageDialog(this, message);
         }   

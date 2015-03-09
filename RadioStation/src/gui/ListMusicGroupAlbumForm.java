@@ -226,8 +226,17 @@ public class ListMusicGroupAlbumForm extends JPanel {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
                     
-                    // Διαγραφή καταχωρήσεων τραγουδιών του άλμπουμ 
-                    // από AlbumSong και PlayListSong
+                    // Διαγραφή καταχωρήσεων του άλμπουμ από AlbumSong
+                    // και διαγραφή των τραγουδιών του από PlayListSong
+                    
+                    java.util.Collection data1 = albumSongQuery.getResultList();
+                    for (Object entity : data1) 
+                        em.refresh(entity);
+                    
+                    java.util.Collection data2 = playListSongQuery.getResultList();
+                    for (Object entity : data2) 
+                        em.refresh(entity);
+                    
                     for (Object o : albumSongList) {
                         if (((AlbumSong)o).getAlbumid().equals(a)) {
                            for (Object o2 : playListSongList) {
@@ -254,13 +263,6 @@ public class ListMusicGroupAlbumForm extends JPanel {
                         em.refresh(entity);
                     list1.clear();
                     list1.addAll(data);
-                    java.util.Collection data2 = albumSongQuery.getResultList();
-                    for (Object entity : data2) 
-                        em.refresh(entity);
-                    java.util.Collection data3 = playListSongQuery.getResultList();
-                    for (Object entity : data3) 
-                        em.refresh(entity);
-                        
                 }
             }
             public void windowActivated(WindowEvent arg0) {
