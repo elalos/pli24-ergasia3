@@ -10,6 +10,7 @@ import misc.MyWindowEvent;
 import pojos.PlayList;
 import pojos.PlayListSong;
 import pojos.Song;
+import pojos.AlbumSong;
 
 public class EditPlayListForm extends javax.swing.JFrame {
     
@@ -29,10 +30,12 @@ public class EditPlayListForm extends javax.swing.JFrame {
 
     public EditPlayListForm(PlayList pl, boolean readOnly) {
         playList1 = pl;
-        this.readOnly = readOnly;          
+        this.readOnly = readOnly;    
+        
         em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
+        
         initComponents(); 
         
         // Διαμόρφωση φόρμας διαγραφής
@@ -57,9 +60,9 @@ public class EditPlayListForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        songQuery = em.createQuery("SELECT s FROM PlayListSong s WHERE s.playlistid=:playlist").setParameter("playlist",playList2);
-        songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
         playList2 = playList1;
+        songQuery = em.createQuery("SELECT pls FROM PlayListSong pls JOIN pls.songid s JOIN s.albumid a WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
+        songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();

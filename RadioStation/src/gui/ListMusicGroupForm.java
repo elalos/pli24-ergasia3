@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import misc.DBManager;
 import pojos.MusicGroup;
 import misc.MyWindowEvent;
+import pojos.MusicGroupArtist;
 
 public class ListMusicGroupForm extends JPanel {
     
@@ -39,6 +40,8 @@ public class ListMusicGroupForm extends JPanel {
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
         albumQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT alb.musicgroupid FROM Album alb");
         albumList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumQuery.getResultList());
+        musicGroupArtistQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT mga FROM MusicGroupArtist mga");
+        musicGroupArtistList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(musicGroupArtistQuery.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         exitButton = new javax.swing.JButton();
@@ -224,6 +227,9 @@ public class ListMusicGroupForm extends JPanel {
                 public void windowClosed(WindowEvent arg0) {
                     System.out.println("Window close event occur");
                     if (((MyWindowEvent)arg0).exitAndSave) {
+                        for (Object o : musicGroupArtistList) 
+                        if (((MusicGroupArtist)o).getMusicgroupid().equals(mg))
+                            em.remove(o);
                         em.remove(mg);
                         em.getTransaction().commit();
                         em.getTransaction().begin();
@@ -345,6 +351,8 @@ public class ListMusicGroupForm extends JPanel {
     private javax.swing.JTable jTable1;
     private java.util.List<pojos.MusicGroup> list1;
     private javax.swing.JScrollPane masterScrollPane;
+    private java.util.List musicGroupArtistList;
+    private javax.persistence.Query musicGroupArtistQuery;
     private javax.swing.JButton newButton;
     private javax.persistence.Query query1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;

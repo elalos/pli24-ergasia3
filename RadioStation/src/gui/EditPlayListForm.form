@@ -2,6 +2,11 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
+    <Component class="pojos.PlayList" name="playList2">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="playList1"/>
+      </AuxValues>
+    </Component>
     <Component class="javax.persistence.Query" name="songQuery">
       <Properties>
         <Property name="query" type="java.lang.String" value=""/>
@@ -10,7 +15,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT s FROM PlayListSong s WHERE s.playlistid=:playlist&quot;).setParameter(&quot;playlist&quot;,playList2)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT pls FROM PlayListSong pls JOIN pls.songid s JOIN s.albumid a WHERE pls.playlistid=:playlist&quot;).setParameter(&quot;playlist&quot;,playList2)"/>
       </AuxValues>
     </Component>
     <Component class="java.util.List" name="songList">
@@ -20,10 +25,8 @@
         </Property>
         <Property name="observable" type="boolean" value="true"/>
       </Properties>
-    </Component>
-    <Component class="pojos.PlayList" name="playList2">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="playList1"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
       </AuxValues>
     </Component>
   </NonVisualComponents>

@@ -29,7 +29,7 @@ public class MyRenderer extends DefaultListCellRenderer {
         if (value instanceof Artist) {
             Artist a = (Artist) value;
             setText(a.getArtisticname());
-        }
+        }        
         return this;
     }
 }
