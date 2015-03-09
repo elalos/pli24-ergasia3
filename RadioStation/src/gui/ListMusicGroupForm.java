@@ -239,12 +239,15 @@ public class ListMusicGroupForm extends JPanel {
                     else {
                         thisFrame.setEnabled(true);
                         em.getTransaction().rollback();
-                        em.getTransaction().begin();
+                        em.getTransaction().begin();                        
                         java.util.Collection data = query1.getResultList();
                         for (Object entity : data) 
                             em.refresh(entity);
                         list1.clear();
                         list1.addAll(data);
+                        java.util.Collection data2 = musicGroupArtistQuery.getResultList();
+                        for (Object entity : data2) 
+                            em.refresh(entity);
 
                     }
                 }
