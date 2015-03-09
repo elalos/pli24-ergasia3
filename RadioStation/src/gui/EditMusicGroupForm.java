@@ -252,7 +252,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         musicGroupArtist.setMusicgroupid(musicGroup1);
         em.persist(musicGroupArtist);
         
-        amgaf = new AddMusicGroupArtistForm(musicGroupArtist);
+        amgaf = new AddMusicGroupArtistForm(musicGroupArtist, artistList);
         amgaf.setTitle("Επιλογή καλλιτέχνη");
         amgaf.setVisible(true);
         thisFrame = this;
@@ -262,7 +262,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
-                    artistList.add(musicGroupArtist.getArtistid());
+                    artistList.add(musicGroupArtist);
                     int row = artistList.size() - 1;                    
                     jTable1.setRowSelectionInterval(row, row);
                     jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
@@ -346,7 +346,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.util.List artistList;
+    private java.util.List<pojos.MusicGroupArtist> artistList;
     private javax.persistence.Query artistQuery;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteButton;

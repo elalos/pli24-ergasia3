@@ -11,7 +11,6 @@ import pojos.Album;
 import pojos.AlbumSong;
 import pojos.Song;
 
-//Δημιουργία ΚΛΑΣΣΗΣ EditArtistAlbumForm
 
 public class EditArtistAlbumForm extends javax.swing.JFrame {
     

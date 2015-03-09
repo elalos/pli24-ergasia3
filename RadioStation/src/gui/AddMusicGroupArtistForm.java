@@ -2,6 +2,9 @@ package gui;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.persistence.EntityManager;
 import misc.DBManager;
 import misc.MyWindowEvent;
@@ -13,6 +16,7 @@ public class AddMusicGroupArtistForm extends javax.swing.JFrame {
 
     private EntityManager em;
     private MusicGroupArtist musicGroupArtist1;
+    private List musicGroupArtistList;
     
     /**
      * Creates new form AddPlayListSong
@@ -21,8 +25,11 @@ public class AddMusicGroupArtistForm extends javax.swing.JFrame {
         initComponents();
     }
     
-    public AddMusicGroupArtistForm(MusicGroupArtist mga) {
+    public AddMusicGroupArtistForm(MusicGroupArtist mga, List musicGroupArtistList) {
         musicGroupArtist1 = mga;
+        this.musicGroupArtistList = musicGroupArtistList;
+        Collection artistsAlreadyInGroup = musicGroupArtistList;       
+         
         em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
@@ -41,7 +48,7 @@ public class AddMusicGroupArtistForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        artistQuery = em.createQuery("SELECT a FROM Artist a");
+        artistQuery = em.createQuery("SELECT a FROM Artist a WHERE a.artistid NOT IN :artistlist").setParameter("artistlist",((MusicGroupArtist)musicGroupArtistList).getArtistid());
         artistList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(artistQuery.getResultList());
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
