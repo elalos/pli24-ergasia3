@@ -24,13 +24,13 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        listArtistFormItem = new javax.swing.JMenuItem();
+        listMusicGroupFormItem = new javax.swing.JMenuItem();
+        listMusicGroupAlbumFormItem = new javax.swing.JMenuItem();
+        listArtistAlbumFormItem = new javax.swing.JMenuItem();
+        listPlayListFormItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem6 = new javax.swing.JMenuItem();
+        exitItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Σύστημα Ραδιοφωνικού Σταθμού");
@@ -39,63 +39,63 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenu3.setText("1-Διαχείριση Αρχείων");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem1.setText("Καλλιτέχνες");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        listArtistFormItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.ALT_MASK));
+        listArtistFormItem.setText("Καλλιτέχνες");
+        listArtistFormItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                listArtistFormItemActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem1);
+        jMenu3.add(listArtistFormItem);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem2.setText("Συγκροτήματα");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        listMusicGroupFormItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
+        listMusicGroupFormItem.setText("Συγκροτήματα");
+        listMusicGroupFormItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                listMusicGroupFormItemActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem2);
+        jMenu3.add(listMusicGroupFormItem);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem3.setText("Άλμπουμ Συγκροτημάτων");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        listMusicGroupAlbumFormItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
+        listMusicGroupAlbumFormItem.setText("Άλμπουμ Συγκροτημάτων");
+        listMusicGroupAlbumFormItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                listMusicGroupAlbumFormItemActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem3);
+        jMenu3.add(listMusicGroupAlbumFormItem);
 
-        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem4.setText("Άλμπουμ Καλλιτεχνών");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+        listArtistAlbumFormItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_MASK));
+        listArtistAlbumFormItem.setText("Άλμπουμ Καλλιτεχνών");
+        listArtistAlbumFormItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
+                listArtistAlbumFormItemActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem4);
+        jMenu3.add(listArtistAlbumFormItem);
 
         jMenu1.add(jMenu3);
 
-        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem5.setText("2-Λίστες Τραγουδιών");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        listPlayListFormItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.ALT_MASK));
+        listPlayListFormItem.setText("2-Λίστες Τραγουδιών");
+        listPlayListFormItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                listPlayListFormItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem5);
+        jMenu1.add(listPlayListFormItem);
         jMenu1.add(jSeparator1);
 
-        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.gif"))); // NOI18N
-        jMenuItem6.setText("3-Έξοδος");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+        exitItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.ALT_MASK));
+        exitItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel.gif"))); // NOI18N
+        exitItem.setText("3-Έξοδος");
+        exitItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
+                exitItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem6);
+        jMenu1.add(exitItem);
 
         jMenuBar1.add(jMenu1);
 
@@ -105,7 +105,7 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void listMusicGroupFormItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listMusicGroupFormItemActionPerformed
         
         ListMusicGroupForm lmgf = new ListMusicGroupForm();
         
@@ -114,14 +114,14 @@ public class MainFrame extends javax.swing.JFrame {
         add(lmgf, BorderLayout.CENTER);
         
         pack();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_listMusicGroupFormItemActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+    private void exitItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitItemActionPerformed
         // TODO add your handling code here:
         System.exit(0);
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
+    }//GEN-LAST:event_exitItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void listArtistFormItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listArtistFormItemActionPerformed
         
         ListArtistForm laf = new ListArtistForm();
         
@@ -130,9 +130,9 @@ public class MainFrame extends javax.swing.JFrame {
         add(laf,BorderLayout.CENTER);
         
         pack();
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_listArtistFormItemActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void listMusicGroupAlbumFormItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listMusicGroupAlbumFormItemActionPerformed
         
         ListMusicGroupAlbumForm lmgaf = new ListMusicGroupAlbumForm();
         
@@ -141,9 +141,9 @@ public class MainFrame extends javax.swing.JFrame {
         add(lmgaf,BorderLayout.CENTER);
         
         pack(); 
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_listMusicGroupAlbumFormItemActionPerformed
 
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+    private void listArtistAlbumFormItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listArtistAlbumFormItemActionPerformed
         
         ListArtistAlbumForm laaf = new ListArtistAlbumForm();
         
@@ -152,9 +152,9 @@ public class MainFrame extends javax.swing.JFrame {
         add(laaf,BorderLayout.CENTER);
         
         pack();    
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
+    }//GEN-LAST:event_listArtistAlbumFormItemActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+    private void listPlayListFormItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listPlayListFormItemActionPerformed
         
         ListPlayListForm lplf = new ListPlayListForm();
         
@@ -163,7 +163,7 @@ public class MainFrame extends javax.swing.JFrame {
         add(lplf,BorderLayout.CENTER);
   
         pack();       
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    }//GEN-LAST:event_listPlayListFormItemActionPerformed
    
     /**
      * @param args the command line arguments
@@ -201,15 +201,15 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem exitItem;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JMenuItem listArtistAlbumFormItem;
+    private javax.swing.JMenuItem listArtistFormItem;
+    private javax.swing.JMenuItem listMusicGroupAlbumFormItem;
+    private javax.swing.JMenuItem listMusicGroupFormItem;
+    private javax.swing.JMenuItem listPlayListFormItem;
     // End of variables declaration//GEN-END:variables
 }
