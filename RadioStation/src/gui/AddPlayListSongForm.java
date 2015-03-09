@@ -2,17 +2,49 @@ package gui;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import misc.DBManager;
 import misc.MyWindowEvent;
+import pojos.PlayListSong;
+import pojos.Song;
 
 public class AddPlayListSongForm extends javax.swing.JFrame {
 
+    private EntityManager em;
+    private PlayListSong playListSong;
+    private List songsAlreadyInPlayList;
+    
     /**
      * Creates new form AddPlayListSong
      */
     public AddPlayListSongForm() {
         initComponents();
     }
-
+    
+    public AddPlayListSongForm(PlayListSong playListSong, List playListSongList) {
+        this.playListSong = playListSong;
+        
+        // Αποθήκευση των <Long>songid των τραγουδιών που 
+        // υπάρχουν ήδη στη λίστα τραγουδιών σε λίστα
+        songsAlreadyInPlayList = new ArrayList();
+        for (Object o : playListSongList) {
+            songsAlreadyInPlayList.add(((PlayListSong)o).getSongid().getSongid());
+        }
+        
+        // Αντιμετώπιση περίπτωσης η songsAlreadyInPlayList 
+        // να είναι άδεια
+        if (songsAlreadyInPlayList.isEmpty()) songsAlreadyInPlayList.add(-1);
+        
+        em = DBManager.em;
+        if ( !(em.getTransaction().isActive()) )
+            em.getTransaction().begin();
+        
+        initComponents(); 
+        
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -23,6 +55,8 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
+        songQuery = em.createQuery("SELECT s FROM Song s WHERE s.songid NOT IN :songlist").setParameter("songlist",songsAlreadyInPlayList);
+        songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
@@ -33,17 +67,21 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, songList, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${title}"));
+        columnBinding.setColumnName("Τίτλος");
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ObjectProperty.create());
+        columnBinding.setColumnName("Καλλιτέχνης / Συγκρότημα");
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ObjectProperty.create());
+        columnBinding.setColumnName("Άλμπουμ");
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("{duration}"));
+        columnBinding.setColumnName("Διάρκεια");
+        columnBinding.setEditable(false);
+        bindingGroup.addBinding(jTableBinding);
+        jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
@@ -124,6 +162,10 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
+        // Επιλογή τραγουδιού
+        int row = jTable1.getSelectedRow();
+        playListSong.setSongid((Song)songList.get(row));
+        
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
         for (WindowListener l : this.getWindowListeners())
             l.windowClosed(we);
@@ -181,6 +223,8 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JButton searchButton;
     private javax.swing.JButton selectButton;
+    private java.util.List songList;
+    private javax.persistence.Query songQuery;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

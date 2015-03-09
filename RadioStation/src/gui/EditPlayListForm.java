@@ -142,6 +142,8 @@ public class EditPlayListForm extends javax.swing.JFrame {
 
         jLabel4.setText("Ημερομηνία δημιουργίας:");
 
+        jTextField2.setFocusable(false);
+
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, playList2, org.jdesktop.beansbinding.ELProperty.create("${creationdate}"), jTextField2, org.jdesktop.beansbinding.BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 

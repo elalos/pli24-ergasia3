@@ -3,6 +3,8 @@ package gui;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +17,7 @@ import misc.MyWindowEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pojos.PlayList;
+import pojos.PlayListSong;
 
 public class ListPlayListForm extends JPanel {
     
@@ -22,8 +25,10 @@ public class ListPlayListForm extends JPanel {
     private EditPlayListForm eplf;
     private PlayList pl;
     private JFrame thisFrame;
+    private String today;
     
     public ListPlayListForm() {
+        today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
             em.getTransaction().begin();
@@ -42,7 +47,7 @@ public class ListPlayListForm extends JPanel {
 
         query1 = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT p FROM PlayList p");
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query1.getResultList());
-        playListSongQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT pls.playlistid FROM PlayListSong pls");
+        playListSongQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT pls FROM PlayListSong pls");
         playListSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(playListSongQuery.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -59,6 +64,10 @@ public class ListPlayListForm extends JPanel {
         org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list1, jTable1);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
         columnBinding.setColumnName("Όνομα");
+        columnBinding.setColumnClass(String.class);
+        columnBinding.setEditable(false);
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${creationdate}"));
+        columnBinding.setColumnName("Ημερομηνία δημιουργίας");
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
@@ -243,6 +252,9 @@ public class ListPlayListForm extends JPanel {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
+                    for (Object o : playListSongList) 
+                        if (((PlayListSong)o).getPlaylistid().equals(pl))
+                            em.remove(o);
                     em.remove(pl);
                     em.getTransaction().commit();
                     em.getTransaction().begin();
@@ -289,6 +301,7 @@ public class ListPlayListForm extends JPanel {
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         pl = new PlayList();
+        pl.setCreationdate(today);
         em.persist(pl);
         eplf = new EditPlayListForm(pl, false);
         eplf.setTitle("Δημιουργία λίστας τραγουδιών");
