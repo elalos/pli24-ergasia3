@@ -27,6 +27,38 @@
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="2"/>
       </AuxValues>
     </Component>
+    <Component class="javax.persistence.Query" name="albumSongQuery">
+      <Properties>
+        <Property name="query" type="java.lang.String" value="SELECT alsong FROM AlbumSong alsong"/>
+        <Property name="entityManager" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="em" type="code"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="java.util.List" name="albumSongList">
+      <Properties>
+        <Property name="query" type="java.lang.Object" editor="org.netbeans.modules.form.j2ee.J2EEPropertyModifier$QueryBeanProperty$QueryEditor">
+          <ComponentRef name="albumSongQuery"/>
+        </Property>
+        <Property name="observable" type="boolean" value="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.persistence.Query" name="playListSongQuery">
+      <Properties>
+        <Property name="query" type="java.lang.String" value="SELECT pls FROM PlayListSong pls"/>
+        <Property name="entityManager" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="em" type="code"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="java.util.List" name="playListSongList">
+      <Properties>
+        <Property name="query" type="java.lang.Object" editor="org.netbeans.modules.form.j2ee.J2EEPropertyModifier$QueryBeanProperty$QueryEditor">
+          <ComponentRef name="playListSongQuery"/>
+        </Property>
+        <Property name="observable" type="boolean" value="true"/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
