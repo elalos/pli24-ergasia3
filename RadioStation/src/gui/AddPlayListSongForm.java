@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import misc.DBManager;
 import misc.MyWindowEvent;
+import pojos.AlbumSong;
 import pojos.PlayListSong;
 import pojos.Song;
 
@@ -15,6 +16,7 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private EntityManager em;
     private PlayListSong playListSong;
     private List songsAlreadyInPlayList;
+    private List albumSongList;
     
     /**
      * Creates new form AddPlayListSong
@@ -23,14 +25,15 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         initComponents();
     }
     
-    public AddPlayListSongForm(PlayListSong playListSong, List playListSongList) {
+    public AddPlayListSongForm(PlayListSong playListSong, List albumSongList) {
         this.playListSong = playListSong;
+        this.albumSongList = albumSongList;
         
         // Αποθήκευση των <Long>songid των τραγουδιών που 
         // υπάρχουν ήδη στη λίστα τραγουδιών σε λίστα
         songsAlreadyInPlayList = new ArrayList();
-        for (Object o : playListSongList) {
-            songsAlreadyInPlayList.add(((PlayListSong)o).getSongid().getSongid());
+        for (Object o : albumSongList) {
+            songsAlreadyInPlayList.add(((AlbumSong)o).getSongid().getSongid());
         }
         
         // Αντιμετώπιση περίπτωσης η songsAlreadyInPlayList 
@@ -55,8 +58,9 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        songQuery = em.createQuery("SELECT s FROM Song s WHERE s.songid NOT IN :songlist").setParameter("songlist",songsAlreadyInPlayList);
-        songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
+        myTableRenderer1 = new misc.MyTableRenderer();
+        albumSongQuery2 = em.createQuery("SELECT albsong FROM AlbumSong albsong WHERE albsong.songid NOT IN :songlist").setParameter("songlist",songsAlreadyInPlayList);
+        albumSongList2 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumSongQuery2.getResultList());
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
@@ -65,24 +69,29 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         selectButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
+        myTableRenderer1.setText("myTableRenderer1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, songList, jTable1);
-        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${title}"));
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, albumSongList2, jTable1);
+        org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid.title}"));
         columnBinding.setColumnName("Τίτλος");
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${albumid}"));
         columnBinding.setColumnName("Καλλιτέχνης / Συγκρότημα");
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${albumid.title}"));
         columnBinding.setColumnName("Άλμπουμ");
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${duration}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid.duration}"));
         columnBinding.setColumnName("Διάρκεια");
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(1).setCellRenderer(myTableRenderer1);
+        }
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -164,7 +173,8 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
         // Επιλογή τραγουδιού
         int row = jTable1.getSelectedRow();
-        playListSong.setSongid((Song)songList.get(row));
+        playListSong.setSongid(((AlbumSong)albumSongList2.get(row)).getSongid());
+        albumSongList.add(albumSongList2.get(row));
         
         MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
         for (WindowListener l : this.getWindowListeners())
@@ -216,15 +226,16 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.util.List albumSongList2;
+    private javax.persistence.Query albumSongQuery2;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private misc.MyTableRenderer myTableRenderer1;
     private javax.swing.JButton searchButton;
     private javax.swing.JButton selectButton;
-    private java.util.List songList;
-    private javax.persistence.Query songQuery;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

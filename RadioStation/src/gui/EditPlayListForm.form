@@ -31,6 +31,7 @@
         <Property name="observable" type="boolean" value="true"/>
       </Properties>
       <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="songList.add(new Song(-1L));"/>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
       </AuxValues>
     </Component>
@@ -61,7 +62,8 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT albsong FROM AlbumSong albsong WHERE albsong.songid IN :songlist&quot;).setParameter(&quot;songlist&quot;,songList)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="albumSongQuery = em.createQuery(&quot;SELECT albsong FROM AlbumSong albsong WHERE albsong.songid IN :songlist&quot;).setParameter(&quot;songlist&quot;,songList);"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
       </AuxValues>
     </Component>
     <Component class="java.util.List" name="albumSongList">

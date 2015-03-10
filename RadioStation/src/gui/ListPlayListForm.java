@@ -267,6 +267,14 @@ public class ListPlayListForm extends JPanel {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
+                    
+                    // Ανανέωση playListSongQuery και playListSongList
+                    java.util.Collection data = playListSongQuery.getResultList();
+                    for (Object entity : data) 
+                        em.refresh(entity);
+                    playListSongList.clear();
+                    playListSongList.addAll(data);
+                        
                     for (Object o : playListSongList) 
                         if (((PlayListSong)o).getPlaylistid().equals(pl))
                             em.remove(o);

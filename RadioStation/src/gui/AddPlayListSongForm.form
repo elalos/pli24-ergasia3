@@ -2,7 +2,12 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
-    <Component class="javax.persistence.Query" name="songQuery">
+    <Component class="misc.MyTableRenderer" name="myTableRenderer1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="myTableRenderer1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.persistence.Query" name="albumSongQuery2">
       <Properties>
         <Property name="query" type="java.lang.String" value=""/>
         <Property name="entityManager" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -10,13 +15,13 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT s FROM Song s WHERE s.songid NOT IN :songlist&quot;).setParameter(&quot;songlist&quot;,songsAlreadyInPlayList)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT albsong FROM AlbumSong albsong WHERE albsong.songid NOT IN :songlist&quot;).setParameter(&quot;songlist&quot;,songsAlreadyInPlayList)"/>
       </AuxValues>
     </Component>
-    <Component class="java.util.List" name="songList">
+    <Component class="java.util.List" name="albumSongList2">
       <Properties>
         <Property name="query" type="java.lang.Object" editor="org.netbeans.modules.form.j2ee.J2EEPropertyModifier$QueryBeanProperty$QueryEditor">
-          <ComponentRef name="songQuery"/>
+          <ComponentRef name="albumSongQuery2"/>
         </Property>
         <Property name="observable" type="boolean" value="true"/>
       </Properties>
@@ -106,7 +111,9 @@
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>
-                  <Renderer/>
+                  <Renderer editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                    <Connection code="myTableRenderer1" type="code"/>
+                  </Renderer>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
@@ -125,20 +132,20 @@
             </Property>
           </Properties>
           <BindingProperties>
-            <BindingProperty name="elements" source="songList" target="jTable1" targetPath="elements" updateStrategy="0" immediately="true">
-              <Subbinding sourcePath="${title}">
+            <BindingProperty name="elements" source="albumSongList2" target="jTable1" targetPath="elements" updateStrategy="0" immediately="true">
+              <Subbinding sourcePath="${songid.title}">
                 <BindingParameter name="NAME" value="&#x3a4;&#x3af;&#x3c4;&#x3bb;&#x3bf;&#x3c2;"/>
                 <BindingParameter name="javax.swing.binding.ParameterKeys.EDITABLE" value="false"/>
               </Subbinding>
-              <Subbinding sourcePath="${songid}">
+              <Subbinding sourcePath="${albumid}">
                 <BindingParameter name="NAME" value="&#x39a;&#x3b1;&#x3bb;&#x3bb;&#x3b9;&#x3c4;&#x3ad;&#x3c7;&#x3bd;&#x3b7;&#x3c2; / &#x3a3;&#x3c5;&#x3b3;&#x3ba;&#x3c1;&#x3cc;&#x3c4;&#x3b7;&#x3bc;&#x3b1;"/>
                 <BindingParameter name="javax.swing.binding.ParameterKeys.EDITABLE" value="false"/>
               </Subbinding>
-              <Subbinding sourcePath="${songid}">
+              <Subbinding sourcePath="${albumid.title}">
                 <BindingParameter name="NAME" value="&#x386;&#x3bb;&#x3bc;&#x3c0;&#x3bf;&#x3c5;&#x3bc;"/>
                 <BindingParameter name="javax.swing.binding.ParameterKeys.EDITABLE" value="false"/>
               </Subbinding>
-              <Subbinding sourcePath="${duration}">
+              <Subbinding sourcePath="${songid.duration}">
                 <BindingParameter name="NAME" value="&#x394;&#x3b9;&#x3ac;&#x3c1;&#x3ba;&#x3b5;&#x3b9;&#x3b1;"/>
                 <BindingParameter name="javax.swing.binding.ParameterKeys.EDITABLE" value="false"/>
               </Subbinding>

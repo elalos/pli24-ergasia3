@@ -33,7 +33,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
 
     public EditPlayListForm(PlayList pl, boolean readOnly) {
         playList1 = pl;
-        this.readOnly = readOnly;    
+        this.readOnly = readOnly;  
         
         em = DBManager.em;
         if ( !(em.getTransaction().isActive()) )
@@ -67,9 +67,10 @@ public class EditPlayListForm extends javax.swing.JFrame {
         playList2 = playList1;
         songQuery = em.createQuery("SELECT pls.songid FROM PlayListSong pls WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
         songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
+        songList.add(new Song(-1L));
         playListSongQuery = em.createQuery("SELECT pls FROM PlayListSong pls WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
         playListSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(playListSongQuery.getResultList());
-        albumSongQuery = em.createQuery("SELECT albsong FROM AlbumSong albsong WHERE albsong.songid IN :songlist").setParameter("songlist",songList);
+        albumSongQuery = albumSongQuery = em.createQuery("SELECT albsong FROM AlbumSong albsong WHERE albsong.songid IN :songlist").setParameter("songlist",songList);
         albumSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumSongQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -258,6 +259,8 @@ public class EditPlayListForm extends javax.swing.JFrame {
                     System.out.println("Window close event occur");
                     if (((MyWindowEvent)arg0).exitAndSave) {
                         playListSongList.add(playListSong);
+                        //songList.add(((PlayListSong)playListSong).getSongid());
+                        
                         int row = albumSongList.size() - 1;                    
                         jTable1.setRowSelectionInterval(row, row);
                         jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
@@ -311,22 +314,16 @@ public class EditPlayListForm extends javax.swing.JFrame {
         int row = jTable1.getSelectedRow();
         
         for (Object o : playListSongList)
-            if (((PlayListSong)o).getSongid().equals(((AlbumSong)albumSongList.get(row)).getSongid())) 
+            if (((PlayListSong)o).getSongid().equals(((AlbumSong)albumSongList.get(row)).getSongid())) {
+                playListSong = (PlayListSong)o;
                 em.remove(o); // διαγραφή τραγουδιού από PlayListSong
+            }
         
-        albumSongList.remove(row);
+        //songList.remove(((PlayListSong)playListSong).getSongid()); // διαγραφή τραγουδιού από songList
+        playListSongList.remove(playListSong); // διαγραφή τραγουδιού από playListSongList
+                
+        albumSongList.remove(row); // διαγραφή τραγουδιού από albumSongList
         
-        java.util.Collection data1 = songQuery.getResultList();
-        for (Object entity : data1) 
-            em.refresh(entity);
-        songList.clear();
-        songList.addAll(data1);
-                    
-        java.util.Collection data2 = playListSongQuery.getResultList();
-        for (Object entity : data2) 
-            em.refresh(entity);
-        playListSongList.clear();
-        playListSongList.addAll(data2);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
