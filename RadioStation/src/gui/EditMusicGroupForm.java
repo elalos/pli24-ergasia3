@@ -248,56 +248,69 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού NEW
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        musicGroupArtist = new MusicGroupArtist();
-        musicGroupArtist.setMusicgroupid(musicGroup1);
-        em.persist(musicGroupArtist);
         
-        amgaf = new AddMusicGroupArtistForm(musicGroupArtist, artistList);
-        amgaf.setTitle("Επιλογή καλλιτέχνη");
-        amgaf.setVisible(true);
-        thisFrame = this;
-        thisFrame.setEnabled(false);
+        try {
+            musicGroupArtist = new MusicGroupArtist();
+            musicGroupArtist.setMusicgroupid(musicGroup1);
+            em.persist(musicGroupArtist);
+
+            amgaf = new AddMusicGroupArtistForm(musicGroupArtist, artistList);
+            amgaf.setTitle("Επιλογή καλλιτέχνη");
+            amgaf.setVisible(true);
+            thisFrame.setEnabled(false);
+            thisFrame = this;
+            amgaf.addWindowListener(new WindowListener() {
+                public void windowClosed(WindowEvent arg0) {
+                    System.out.println("Window close event occur");
+                    if (((MyWindowEvent)arg0).exitAndSave) {
+                        artistList.add(musicGroupArtist);
+                        int row = artistList.size() - 1;                    
+                        jTable1.setRowSelectionInterval(row, row);
+                        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                        thisFrame.setEnabled(true);
+                    }
+                    else {
+                        thisFrame.setEnabled(true);
+                        em.remove(musicGroupArtist);                       
+                    }
+                }
+
+                public void windowActivated(WindowEvent arg0) {
+                    System.out.println("Window Activated");
+                }
+
+                public void windowClosing(WindowEvent arg0) {
+                    System.out.println("Window Closing");
+                }
+
+                public void windowDeactivated(WindowEvent arg0) {
+                    System.out.println("Window Deactivated");
+                }
+
+                public void windowDeiconified(WindowEvent arg0) {
+                    System.out.println("Window Deiconified");
+                }
+
+                public void windowIconified(WindowEvent arg0) {
+                    System.out.println("Window Iconified");
+                }
+
+                public void windowOpened(WindowEvent arg0) {
+                    System.out.println("Window Opened");
+                }
+            });
+        }
+        catch (RuntimeException e) {
+                String message = "Αδυναμία εγγραφής, ελέγξτε τα δεδομένα!";
+                JOptionPane.showMessageDialog(thisFrame, message);  
+                                
+                MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
+                for (WindowListener l : this.getWindowListeners())
+                    l.windowClosed(we);
+                this.setVisible(false);
+                
+        }
         
-        amgaf.addWindowListener(new WindowListener() {
-            public void windowClosed(WindowEvent arg0) {
-                System.out.println("Window close event occur");
-                if (((MyWindowEvent)arg0).exitAndSave) {
-                    artistList.add(musicGroupArtist);
-                    int row = artistList.size() - 1;                    
-                    jTable1.setRowSelectionInterval(row, row);
-                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
-                    thisFrame.setEnabled(true);
-                }
-                else {
-                    thisFrame.setEnabled(true);
-                    em.remove(musicGroupArtist);                       
-                }
-            }
-            
-            public void windowActivated(WindowEvent arg0) {
-                System.out.println("Window Activated");
-            }
-
-            public void windowClosing(WindowEvent arg0) {
-                System.out.println("Window Closing");
-            }
-
-            public void windowDeactivated(WindowEvent arg0) {
-                System.out.println("Window Deactivated");
-            }
-
-            public void windowDeiconified(WindowEvent arg0) {
-                System.out.println("Window Deiconified");
-            }
-
-            public void windowIconified(WindowEvent arg0) {
-                System.out.println("Window Iconified");
-            }
-
-            public void windowOpened(WindowEvent arg0) {
-                System.out.println("Window Opened");
-            }
-        });
     }//GEN-LAST:event_newButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE

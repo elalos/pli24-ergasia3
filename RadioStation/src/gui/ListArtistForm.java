@@ -171,12 +171,26 @@ public class ListArtistForm extends JPanel {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
-                    em.getTransaction().commit();
-                    em.getTransaction().begin();
-                    list1.set(row, a);
-                    jTable1.setRowSelectionInterval(row, row);
-                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
-                    thisFrame.setEnabled(true);
+                    try {
+                        em.getTransaction().commit();
+                        em.getTransaction().begin();
+                        list1.set(row, a);
+                        jTable1.setRowSelectionInterval(row, row);
+                        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                        thisFrame.setEnabled(true);
+                    }
+                    catch (RuntimeException e) {
+                            String message = "Αδυναμία εγγραφής, ελέγξτε τα δεδομένα!";
+                            JOptionPane.showMessageDialog(thisFrame, message);  
+                            thisFrame.setEnabled(true);
+                            if ( !(em.getTransaction().isActive()) )
+                                em.getTransaction().begin();
+                            java.util.Collection data = query1.getResultList();
+                            for (Object entity : data) 
+                                em.refresh(entity);
+                            list1.clear();
+                            list1.addAll(data);
+                    }
                 }
                 else {
                     thisFrame.setEnabled(true);
@@ -297,13 +311,27 @@ public class ListArtistForm extends JPanel {
             public void windowClosed(WindowEvent arg0) {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
-                    em.getTransaction().commit();
-                    em.getTransaction().begin();
-                    list1.add(a);
-                    int row = list1.size() - 1;                    
-                    jTable1.setRowSelectionInterval(row, row);
-                    jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
-                    thisFrame.setEnabled(true);
+                    try {
+                        em.getTransaction().commit();
+                        em.getTransaction().begin();
+                        list1.add(a);
+                        int row = list1.size() - 1;                    
+                        jTable1.setRowSelectionInterval(row, row);
+                        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                        thisFrame.setEnabled(true);
+                    }
+                    catch (RuntimeException e) {
+                            String message = "Αδυναμία εγγραφής, ελέγξτε τα δεδομένα!";
+                            JOptionPane.showMessageDialog(thisFrame, message);  
+                            thisFrame.setEnabled(true);
+                            if ( !(em.getTransaction().isActive()) )
+                                em.getTransaction().begin();
+                            java.util.Collection data = query1.getResultList();
+                            for (Object entity : data) 
+                                em.refresh(entity);
+                            list1.clear();
+                            list1.addAll(data);
+                    }
                 }
                 else {
                     thisFrame.setEnabled(true);
