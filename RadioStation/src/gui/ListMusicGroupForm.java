@@ -242,7 +242,7 @@ public class ListMusicGroupForm extends JPanel {
                     System.out.println("Window close event occur");
                     if (((MyWindowEvent)arg0).exitAndSave) {
                         
-                        // Ανανέωση musicGroupArtistQuery και musicGroupArtistList
+                        // Ανανέωση musicGroupArtistList
                         java.util.Collection data = musicGroupArtistQuery.getResultList();
                         for (Object entity : data) 
                             em.refresh(entity);

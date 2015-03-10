@@ -242,14 +242,14 @@ public class ListMusicGroupAlbumForm extends JPanel {
                 if (((MyWindowEvent)arg0).exitAndSave) {
                     
                     
-                    // Ανανέωση albumSongQuery και albumSongList
+                    // Ανανέωση albumSongList
                     java.util.Collection data1 = albumSongQuery.getResultList();
                     for (Object entity : data1) 
                         em.refresh(entity);
                     albumSongList.clear();
                     albumSongList.addAll(data1);
                     
-                    // Ανανέωση playListSongQuery και playListSongList
+                    // Ανανέωση playListSongList
                     java.util.Collection data2 = playListSongQuery.getResultList();
                     for (Object entity : data2) 
                         em.refresh(entity);
