@@ -3,6 +3,7 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.persistence.EntityManager;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import misc.DBManager;
@@ -10,7 +11,6 @@ import misc.MyWindowEvent;
 import pojos.PlayList;
 import pojos.PlayListSong;
 import pojos.Song;
-import pojos.AlbumSong;
 
 public class EditPlayListForm extends javax.swing.JFrame {
     
@@ -19,7 +19,9 @@ public class EditPlayListForm extends javax.swing.JFrame {
     private EntityManager em;
     private Song song;
     private PlayListSong playListSong;
-    private int cnt = 0;
+    private Long cnt = 0L;
+    private AddPlayListSongForm aplsf;
+    private JFrame thisFrame;
 
     /**
      * Creates new form EditMusicGroupAlbumForm
@@ -61,7 +63,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         playList2 = playList1;
-        songQuery = em.createQuery("SELECT pls FROM PlayListSong pls JOIN pls.songid s JOIN s.albumid a WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
+        songQuery = em.createQuery("SELECT pls FROM PlayListSong pls WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
         songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -110,6 +112,9 @@ public class EditPlayListForm extends javax.swing.JFrame {
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(1).setCellRenderer(null);
+        }
 
         newButton.setText("Εισαγωγή τραγουδιού");
         newButton.addActionListener(new java.awt.event.ActionListener() {
@@ -228,31 +233,84 @@ public class EditPlayListForm extends javax.swing.JFrame {
 
 //Δημιουργία μεθόδου για πάτημα κουμπιού NEW
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        playListSong = new PlayListSong();
-        song = new Song();
-        playListSong.setSongid(song);
-        playListSong.setPlaylistid(playList1);
-        em.persist(playListSong);
-        em.persist(song);
-        songList.add(playListSong);
-        int row = songList.size() - 1;
-        jTable1.setRowSelectionInterval(row, row);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true));          
+        try {
+            playListSong = new PlayListSong();
+            playListSong.setPlaylistid(playList1);
+            em.persist(playListSong);
+            
+            aplsf = new AddPlayListSongForm(playListSong, songList);
+            aplsf.setTitle("Επιλογή τραγουδιού");
+            aplsf.setVisible(true);
+            thisFrame = this;
+            thisFrame.setEnabled(false);
+            aplsf.addWindowListener(new WindowListener() {
+                public void windowClosed(WindowEvent arg0) {
+                    System.out.println("Window close event occur");
+                    if (((MyWindowEvent)arg0).exitAndSave) {
+                        songList.add(playListSong);
+                        int row = songList.size() - 1;                    
+                        jTable1.setRowSelectionInterval(row, row);
+                        jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+                        thisFrame.setEnabled(true);
+                    }
+                    else {
+                        thisFrame.setEnabled(true);
+                        em.remove(playListSong);                       
+                    }
+                }
+
+                public void windowActivated(WindowEvent arg0) {
+                    System.out.println("Window Activated");
+                }
+
+                public void windowClosing(WindowEvent arg0) {
+                    System.out.println("Window Closing");
+                }
+
+                public void windowDeactivated(WindowEvent arg0) {
+                    System.out.println("Window Deactivated");
+                }
+
+                public void windowDeiconified(WindowEvent arg0) {
+                    System.out.println("Window Deiconified");
+                }
+
+                public void windowIconified(WindowEvent arg0) {
+                    System.out.println("Window Iconified");
+                }
+
+                public void windowOpened(WindowEvent arg0) {
+                    System.out.println("Window Opened");
+                }
+            });
+        }
+        catch (RuntimeException e) {
+                String message = "Αδυναμία εγγραφής, ελέγξτε τα δεδομένα!";
+                JOptionPane.showMessageDialog(thisFrame, message);  
+               
+                MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
+                for (WindowListener l : this.getWindowListeners())
+                    l.windowClosed(we);
+                this.setVisible(false);
+                
+        }
     }//GEN-LAST:event_newButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
         playListSong = (PlayListSong)songList.get(row);    
-        em.remove(playListSong);
+        em.remove(playListSong); // διαγραφή τραγουδιού από PlayListSong
         songList.remove(row);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         
-        // Yπολογισμός διάρκειας λίστας
-        cnt = 1800;
+        // Υπολογισμός διάρκειας τραγουδιών της λίστας
+         for (Object o : songList)   
+            if (((PlayListSong)o).getSongid().getDuration() != null)
+                cnt += ((PlayListSong)o).getSongid().getDuration().longValue();
         
         // ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΔΙΑΡΚΕΙΑ ΛΙΣΤΑΣ ΜΙΣΗΣ ΩΡΑΣ
         if (cnt >= 1800) {

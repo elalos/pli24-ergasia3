@@ -15,7 +15,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT pls FROM PlayListSong pls JOIN pls.songid s JOIN s.albumid a WHERE pls.playlistid=:playlist&quot;).setParameter(&quot;playlist&quot;,playList2)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="em.createQuery(&quot;SELECT pls FROM PlayListSong pls WHERE pls.playlistid=:playlist&quot;).setParameter(&quot;playlist&quot;,playList2)"/>
       </AuxValues>
     </Component>
     <Component class="java.util.List" name="songList">
@@ -178,7 +178,9 @@
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>
-                  <Renderer/>
+                  <Renderer editor="org.netbeans.modules.form.ComponentChooserEditor">
+                    <ComponentRef name="null"/>
+                  </Renderer>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
