@@ -62,7 +62,7 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
         musicProductionCompanyList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(musicProductionCompanyQuery.getResultList());
         musicGroupQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT mg FROM MusicGroup mg");
         musicGroupList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(musicGroupQuery.getResultList());
-        myRenderer1 = new misc.MyRenderer();
+        myRenderer1 = new misc.MyListRenderer();
         songQuery = em.createQuery("SELECT s FROM AlbumSong s WHERE s.albumid=:album").setParameter("album",album2);
         songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
@@ -430,7 +430,7 @@ public class EditMusicGroupAlbumForm extends javax.swing.JFrame {
     private javax.persistence.Query musicGroupQuery;
     private java.util.List musicProductionCompanyList;
     private javax.persistence.Query musicProductionCompanyQuery;
-    private misc.MyRenderer myRenderer1;
+    private misc.MyListRenderer myRenderer1;
     private javax.swing.JButton newButton;
     private javax.swing.JButton saveButton;
     private java.util.List songList;
