@@ -44,7 +44,7 @@
         <Property name="observable" type="boolean" value="true"/>
       </Properties>
     </Component>
-    <Component class="misc.MyRenderer" name="myRenderer1">
+    <Component class="misc.MyListRenderer" name="myRenderer1">
       <Properties>
         <Property name="text" type="java.lang.String" value="renderer1"/>
       </Properties>

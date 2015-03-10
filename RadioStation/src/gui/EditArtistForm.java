@@ -52,7 +52,7 @@ public class EditArtistForm extends javax.swing.JFrame {
         artist2 = artist1;
         musicGenreQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT g FROM MusicGenre g");
         musicGenreList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : musicGenreQuery.getResultList();
-        myRenderer1 = new misc.MyRenderer();
+        myRenderer1 = new misc.MyListRenderer();
         saveButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -347,7 +347,7 @@ public class EditArtistForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private java.util.List<pojos.MusicGenre> musicGenreList;
     private javax.persistence.Query musicGenreQuery;
-    private misc.MyRenderer myRenderer1;
+    private misc.MyListRenderer myRenderer1;
     private javax.swing.JButton saveButton;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables

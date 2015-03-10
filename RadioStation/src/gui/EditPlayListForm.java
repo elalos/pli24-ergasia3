@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import misc.DBManager;
 import misc.MyWindowEvent;
+import pojos.AlbumSong;
 import pojos.PlayList;
 import pojos.PlayListSong;
 import pojos.Song;
@@ -62,9 +63,14 @@ public class EditPlayListForm extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
+        myTableRenderer1 = new misc.MyTableRenderer();
         playList2 = playList1;
-        songQuery = em.createQuery("SELECT pls FROM PlayListSong pls WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
+        songQuery = em.createQuery("SELECT pls.songid FROM PlayListSong pls WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
         songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
+        playListSongQuery = em.createQuery("SELECT pls FROM PlayListSong pls WHERE pls.playlistid=:playlist").setParameter("playlist",playList2);
+        playListSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(playListSongQuery.getResultList());
+        albumSongQuery = em.createQuery("SELECT albsong FROM AlbumSong albsong WHERE albsong.songid IN :songlist").setParameter("songlist",songList);
+        albumSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumSongQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -77,6 +83,8 @@ public class EditPlayListForm extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+
+        myTableRenderer1.setText("myTableRenderer2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -99,11 +107,11 @@ public class EditPlayListForm extends javax.swing.JFrame {
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setText("Λίστα Τραγουδιών");
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, songList, jTable1);
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, albumSongList, jTable1);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid.title}"));
         columnBinding.setColumnName("Τίτλος");
         columnBinding.setEditable(false);
-        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid}"));
+        columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${albumid}"));
         columnBinding.setColumnName("Καλλιτέχνης / Συγκρότημα");
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${songid.duration}"));
@@ -113,7 +121,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
         jTableBinding.bind();
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(1).setCellRenderer(null);
+            jTable1.getColumnModel().getColumn(1).setCellRenderer(myTableRenderer1);
         }
 
         newButton.setText("Εισαγωγή τραγουδιού");
@@ -189,9 +197,11 @@ public class EditPlayListForm extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 503, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(0, 539, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -238,7 +248,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
             playListSong.setPlaylistid(playList1);
             em.persist(playListSong);
             
-            aplsf = new AddPlayListSongForm(playListSong, songList);
+            aplsf = new AddPlayListSongForm(playListSong, albumSongList);
             aplsf.setTitle("Επιλογή τραγουδιού");
             aplsf.setVisible(true);
             thisFrame = this;
@@ -247,8 +257,8 @@ public class EditPlayListForm extends javax.swing.JFrame {
                 public void windowClosed(WindowEvent arg0) {
                     System.out.println("Window close event occur");
                     if (((MyWindowEvent)arg0).exitAndSave) {
-                        songList.add(playListSong);
-                        int row = songList.size() - 1;                    
+                        playListSongList.add(playListSong);
+                        int row = albumSongList.size() - 1;                    
                         jTable1.setRowSelectionInterval(row, row);
                         jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
                         thisFrame.setEnabled(true);
@@ -299,16 +309,30 @@ public class EditPlayListForm extends javax.swing.JFrame {
     //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
-        playListSong = (PlayListSong)songList.get(row);    
-        em.remove(playListSong); // διαγραφή τραγουδιού από PlayListSong
-        songList.remove(row);
+        
+        for (Object o : playListSongList)
+            if (((PlayListSong)o).getSongid().equals(((AlbumSong)albumSongList.get(row)).getSongid())) 
+                em.remove(o); // διαγραφή τραγουδιού από PlayListSong
+        
+        albumSongList.remove(row);
+        
+        java.util.Collection data1 = songQuery.getResultList();
+        for (Object entity : data1) 
+            em.refresh(entity);
+        songList.clear();
+        songList.addAll(data1);
+                    
+        java.util.Collection data2 = playListSongQuery.getResultList();
+        for (Object entity : data2) 
+            em.refresh(entity);
+        playListSongList.clear();
+        playListSongList.addAll(data2);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        
         // Υπολογισμός διάρκειας τραγουδιών της λίστας
-         for (Object o : songList)   
+         for (Object o : playListSongList)   
             if (((PlayListSong)o).getSongid().getDuration() != null)
                 cnt += ((PlayListSong)o).getSongid().getDuration().longValue();
         
@@ -375,6 +399,8 @@ public class EditPlayListForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.util.List albumSongList;
+    private javax.persistence.Query albumSongQuery;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JLabel jLabel1;
@@ -385,8 +411,11 @@ public class EditPlayListForm extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private misc.MyTableRenderer myTableRenderer1;
     private javax.swing.JButton newButton;
     private pojos.PlayList playList2;
+    private java.util.List playListSongList;
+    private javax.persistence.Query playListSongQuery;
     private javax.swing.JButton saveButton;
     private java.util.List songList;
     private javax.persistence.Query songQuery;
