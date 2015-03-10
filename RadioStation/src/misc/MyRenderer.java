@@ -28,7 +28,7 @@ public class MyRenderer extends DefaultListCellRenderer {
         }
         if (value instanceof Artist) {
             Artist a = (Artist) value;
-            setText(a.getArtisticname());
+            setText(a.getArtisticname()+" "+a.getLastname()+" "+a.getFirstname());
         }        
         return this;
     }

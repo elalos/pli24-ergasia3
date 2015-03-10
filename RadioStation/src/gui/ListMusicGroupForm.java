@@ -228,12 +228,20 @@ public class ListMusicGroupForm extends JPanel {
                     System.out.println("Window close event occur");
                     if (((MyWindowEvent)arg0).exitAndSave) {
                         
+                        // Ανανέωση musicGroupArtistQuery και musicGroupArtistList
+                        java.util.Collection data = musicGroupArtistQuery.getResultList();
+                        for (Object entity : data) 
+                            em.refresh(entity);
+                        musicGroupArtistList.clear();
+                        musicGroupArtistList.addAll(data);
+                        
                         // Διαγραφή καταχωρήσεων του συγκροτήματος από MusicGroupArtist
                         for (Object o : musicGroupArtistList) 
-                            if (((MusicGroupArtist)o).getMusicgroupid().equals(mg))
-                                em.remove(o);
+                            if (((MusicGroupArtist)o).getMusicgroupid().equals(mg)) 
+                                em.remove(o); 
+                           
+                        em.remove(mg); // Διαγραφή του γκρουπ από MusicGroup
                         
-                        em.remove(mg);
                         em.getTransaction().commit();
                         em.getTransaction().begin();
                         list1.remove(row);
