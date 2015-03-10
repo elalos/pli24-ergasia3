@@ -257,8 +257,8 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
             amgaf = new AddMusicGroupArtistForm(musicGroupArtist, artistList);
             amgaf.setTitle("Επιλογή καλλιτέχνη");
             amgaf.setVisible(true);
-            thisFrame.setEnabled(false);
             thisFrame = this;
+            thisFrame.setEnabled(false);
             amgaf.addWindowListener(new WindowListener() {
                 public void windowClosed(WindowEvent arg0) {
                     System.out.println("Window close event occur");
@@ -303,7 +303,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
         catch (RuntimeException e) {
                 String message = "Αδυναμία εγγραφής, ελέγξτε τα δεδομένα!";
                 JOptionPane.showMessageDialog(thisFrame, message);  
-                                
+               
                 MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, false);
                 for (WindowListener l : this.getWindowListeners())
                     l.windowClosed(we);
