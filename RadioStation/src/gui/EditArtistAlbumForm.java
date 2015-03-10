@@ -19,6 +19,7 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
     private EntityManager em;
     private AlbumSong albumSong;
     private Song song;
+    private Boolean ok;
 
     /**
      * Creates new form EditMusicGroupAlbumForm
@@ -312,12 +313,47 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
 
 //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        if (songList.size() >= 1) {
-            MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
-            for (WindowListener l : this.getWindowListeners())
-            l.windowClosed(we);
-            this.setVisible(false); } 
-        else {
+        if (songList.size() == 1) { 
+           MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
+           for (WindowListener l : this.getWindowListeners())
+           l.windowClosed(we);
+           this.setVisible(false); 
+        }
+        else if (songList.size() > 1) { // Έλεγχοι για έγκυρες καταχωρήσεις τραγουδιών
+            ok = true;
+            outerloop:
+            for (int i=0; i<songList.size()-1; i++) {
+                for (int j=i+1; j<songList.size(); j++) {
+                    if (((AlbumSong)songList.get(i)).getSongid().getTracknr() != null && ((AlbumSong)songList.get(j)).getSongid().getTracknr() != null){
+                        if (((AlbumSong)songList.get(i)).getSongid().getTracknr().equals(((AlbumSong)songList.get(j)).getSongid().getTracknr())) {
+                            // Υπάρχουν τραγούδια με τον ίδιο αριθμό θέσης
+                            String message = "Το άλμπουμ περιέχει τραγούδια με τον ίδιο αριθμό θέσης!";
+                            JOptionPane.showMessageDialog(this, message);
+                            ok = false;
+                            break outerloop;
+                        }
+                    }
+                    if (((AlbumSong)songList.get(i)).getSongid().getTitle()!= null && ((AlbumSong)songList.get(j)).getSongid().getTitle()!= null){
+                        if (((AlbumSong)songList.get(i)).getSongid().getTitle().toLowerCase().equals(((AlbumSong)songList.get(j)).getSongid().getTitle().toLowerCase())) {
+                            // Υπάρχουν τραγούδια με τον ίδιο τίτλο
+                            String message = "Το άλμπουμ περιέχει τραγούδια με τον ίδιο τίτλο";
+                            JOptionPane.showMessageDialog(this, message);
+                            ok = false;
+                            break outerloop;
+                        }
+                    }
+                }
+            }
+            if (ok == true) {
+                MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
+                for (WindowListener l : this.getWindowListeners())
+                    l.windowClosed(we);
+                this.setVisible(false);
+            }
+             
+        }
+        else { 
+            // Το άλμπουμ δεν έχει κανένα τραγούδι
             String message = "Το άλμπουμ πρέπει να περιέχει τουλάχιστον ένα τραγούδι!";
             JOptionPane.showMessageDialog(this, message);
         }
