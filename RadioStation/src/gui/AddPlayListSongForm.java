@@ -3,7 +3,10 @@ package gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import misc.DBManager;
 import misc.MyWindowEvent;
@@ -17,6 +20,8 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private PlayListSong playListSong;
     private List songsAlreadyInPlayList;
     private List albumSongList;
+    private Set hashSet;
+    private List tempAlbumSongList;
     
     /**
      * Creates new form AddPlayListSong
@@ -28,6 +33,8 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     public AddPlayListSongForm(PlayListSong playListSong, List albumSongList) {
         this.playListSong = playListSong;
         this.albumSongList = albumSongList;
+        
+        hashSet = new HashSet<AlbumSong>();
         
         // Αποθήκευση των <Long>songid των τραγουδιών που 
         // υπάρχουν ήδη στη λίστα τραγουδιών σε λίστα
@@ -46,6 +53,7 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         
         initComponents(); 
         
+        tempAlbumSongList = new ArrayList(albumSongList2);
     }
     
     /**
@@ -63,7 +71,7 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         albumSongList2 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(albumSongQuery2.getResultList());
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
+        searchTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         searchButton = new javax.swing.JButton();
         selectButton = new javax.swing.JButton();
@@ -93,9 +101,9 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
             jTable1.getColumnModel().getColumn(1).setCellRenderer(myTableRenderer1);
         }
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        searchTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                searchTextFieldActionPerformed(evt);
             }
         });
 
@@ -104,6 +112,11 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         jLabel1.setText("Τραγούδια");
 
         searchButton.setText("Αναζήτηση");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         selectButton.setText("Επιλογή");
 
@@ -132,7 +145,7 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchButton))
                     .addGroup(layout.createSequentialGroup()
@@ -149,7 +162,7 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -166,9 +179,9 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_searchTextFieldActionPerformed
 
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
         // Επιλογή τραγουδιού
@@ -188,6 +201,33 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
         l.windowClosed(we);
         this.setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        
+        albumSongList2.clear();
+        hashSet.clear();
+        String str = searchTextField.getText().toLowerCase();
+        
+        if (searchTextField.getText().isEmpty())
+            albumSongList2.addAll(tempAlbumSongList);
+        else {
+            for (Object o : tempAlbumSongList) {
+                if ((((AlbumSong)o).getSongid().getTitle()!=null&&
+                        ((AlbumSong)o).getSongid().getTitle().toLowerCase().contains(str))||
+                        (((AlbumSong)o).getAlbumid().getArtistid()!=null&&
+                        ((AlbumSong)o).getAlbumid().getArtistid().getArtisticname()!=null&&
+                        ((AlbumSong)o).getAlbumid().getArtistid().getArtisticname().toLowerCase().contains(str))||
+                        (((AlbumSong)o).getAlbumid().getArtistid()!=null&&
+                        ((AlbumSong)o).getAlbumid().getArtistid().getLastname()!=null&&
+                        ((AlbumSong)o).getAlbumid().getArtistid().getLastname().toLowerCase().contains(str))||
+                        (((AlbumSong)o).getAlbumid().getMusicgroupid()!=null&&
+                        ((AlbumSong)o).getAlbumid().getMusicgroupid().getName()!=null&&
+                        ((AlbumSong)o).getAlbumid().getMusicgroupid().getName().toLowerCase().contains(str)))
+                    hashSet.add(o);
+            }
+            albumSongList2.addAll(hashSet);
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,9 +272,9 @@ public class AddPlayListSongForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private misc.MyTableRenderer myTableRenderer1;
     private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchTextField;
     private javax.swing.JButton selectButton;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables

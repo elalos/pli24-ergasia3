@@ -268,7 +268,7 @@ public class ListPlayListForm extends JPanel {
                 System.out.println("Window close event occur");
                 if (((MyWindowEvent)arg0).exitAndSave) {
                     
-                    // Ανανέωση playListSongQuery και playListSongList
+                    // Ανανέωση playListSongList
                     java.util.Collection data = playListSongQuery.getResultList();
                     for (Object entity : data) 
                         em.refresh(entity);
@@ -277,8 +277,9 @@ public class ListPlayListForm extends JPanel {
                         
                     for (Object o : playListSongList) 
                         if (((PlayListSong)o).getPlaylistid().equals(pl))
-                            em.remove(o);
-                    em.remove(pl);
+                            em.remove(o); // Διαγραφή καταχωρήσεων απο PlayListSong
+                    em.remove(pl); // Διαγραφή από PlayList
+                    
                     em.getTransaction().commit();
                     em.getTransaction().begin();
                     list1.remove(row);
