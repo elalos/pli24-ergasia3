@@ -3,8 +3,11 @@ package gui;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -12,13 +15,19 @@ import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import misc.DBManager;
 import misc.MyWindowEvent;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pojos.PlayList;
 import pojos.PlayListSong;
+import pojos.Song;
 
 public class ListPlayListForm extends JPanel {
     
@@ -103,6 +112,7 @@ public class ListPlayListForm extends JPanel {
         exportButton.addActionListener(formListener);
 
         importButton.setText("Εισαγωγή Λίστας από αρχείο XML");
+        importButton.addActionListener(formListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -175,6 +185,9 @@ public class ListPlayListForm extends JPanel {
             }
             else if (evt.getSource() == exportButton) {
                 ListPlayListForm.this.exportButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == importButton) {
+                ListPlayListForm.this.importButtonActionPerformed(evt);
             }
         }
     }// </editor-fold>//GEN-END:initComponents
@@ -441,19 +454,92 @@ public class ListPlayListForm extends JPanel {
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+        String message = "Εισάγετε το όνομα του αρχείου:";
+        String fileName = (String)JOptionPane.showInputDialog(this, message);
+        List pls = new ArrayList();
+        
+        int row = jTable1.getSelectedRow();
+        pl = (PlayList)list1.get(row);
+        
+        // Ανανέωση playListSongList
+        java.util.Collection data = playListSongQuery.getResultList();
+        for (Object entity : data) 
+            em.refresh(entity);
+        playListSongList.clear();
+        playListSongList.addAll(data);
+
+        // Προσθήκη στην pls των τραγουδιών της playListSongList
+        // που αφορούν στην συγκεκριμένη λίστα τραγουδιών
+        for (Object o : playListSongList) 
+            if (((PlayListSong)o).getPlaylistid().equals(pl))
+                pls.add(((PlayListSong)o).getSongid()); 
+        
+        System.out.println(fileName);
         try {
             DocumentBuilderFactory docFactory =
                     DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = 
                     docFactory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
+            
             Element rootElement = doc.createElement("playlist");
             doc.appendChild(rootElement);
-            } catch (ParserConfigurationException pce) {
-                pce.printStackTrace();
+            
+            Attr plId = doc.createAttribute("id");
+            plId.setValue(Long.toString(((PlayList)pl).getPlaylistid()));
+            rootElement.setAttributeNode(plId);
+            
+            Element plName = doc.createElement("name");
+            plName.appendChild(doc.createTextNode(((PlayList)pl).getName()));
+            rootElement.appendChild(plName);
+                        
+            Element plCreationDate = doc.createElement("creation_date");
+            plCreationDate.appendChild(doc.createTextNode(((PlayList)pl).getCreationdate()));
+            rootElement.appendChild(plCreationDate);
+            
+            Element songs = doc.createElement("songs");
+            for (Object o : pls) {
+                
+                Element song = doc.createElement("song");
+                songs.appendChild(song);
+                Attr songId = doc.createAttribute("id");
+                songId.setValue(Long.toString(((Song)o).getSongid()));
+                song.setAttributeNode(songId);
+                
+                Element songTitle = doc.createElement("title");
+                song.appendChild(songTitle);
+                songTitle.appendChild(doc.createTextNode(((Song)o).getTitle()));
+                
+                Element songDuration = doc.createElement("duration");
+                song.appendChild(songDuration);
+                songDuration.appendChild(doc.createTextNode(((Song)o).getDuration().toString()));
+                }
+            
+            rootElement.appendChild(songs);
+            
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result;
+            result = new StreamResult(new File(fileName+".xml"));
+            transformer.transform(source, result);
+            System.out.println("File saved!");
+            }  
+            catch (ParserConfigurationException pce) {
+                    pce.printStackTrace();
             } 
+            catch (TransformerException tfe) {
+                tfe.printStackTrace();
+            }
 
     }//GEN-LAST:event_exportButtonActionPerformed
+
+    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
+        String message = "Εισάγετε το όνομα του αρχείου:";
+        String fileName = (String)JOptionPane.showInputDialog(this, message);
+        
+        
+    }//GEN-LAST:event_importButtonActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
