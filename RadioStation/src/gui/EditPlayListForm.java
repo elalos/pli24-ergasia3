@@ -20,7 +20,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
     private EntityManager em;
     private Song song;
     private PlayListSong playListSong;
-    private Long cnt = 0L;
+    private Long cnt;
     private AddPlayListSongForm aplsf;
     private JFrame thisFrame;
 
@@ -319,7 +319,6 @@ public class EditPlayListForm extends javax.swing.JFrame {
                 em.remove(o); // διαγραφή τραγουδιού από PlayListSong
             }
         
-        //songList.remove(((PlayListSong)playListSong).getSongid()); // διαγραφή τραγουδιού από songList
         playListSongList.remove(playListSong); // διαγραφή τραγουδιού από playListSongList
                 
         albumSongList.remove(row); // διαγραφή τραγουδιού από albumSongList
@@ -328,8 +327,10 @@ public class EditPlayListForm extends javax.swing.JFrame {
 
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        cnt = 0L;
+
         // Υπολογισμός διάρκειας τραγουδιών της λίστας
-         for (Object o : playListSongList)   
+        for (Object o : playListSongList)   
             if (((PlayListSong)o).getSongid().getDuration() != null)
                 cnt += ((PlayListSong)o).getSongid().getDuration().longValue();
         
