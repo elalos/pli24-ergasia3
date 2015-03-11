@@ -25,6 +25,8 @@ import misc.MyWindowEvent;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import pojos.PlayList;
 import pojos.PlayListSong;
 import pojos.Song;
@@ -526,10 +528,12 @@ public class ListPlayListForm extends JPanel {
             System.out.println("File saved!");
             }  
             catch (ParserConfigurationException pce) {
-                    pce.printStackTrace();
+                pce.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Παρουσιάστηκε σφάλμα!");
             } 
             catch (TransformerException tfe) {
                 tfe.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Παρουσιάστηκε σφάλμα!");
             }
 
     }//GEN-LAST:event_exportButtonActionPerformed
@@ -538,7 +542,61 @@ public class ListPlayListForm extends JPanel {
         String message = "Εισάγετε το όνομα του αρχείου:";
         String fileName = (String)JOptionPane.showInputDialog(this, message);
         
+        // Ανανέωση playListSongList
+        java.util.Collection data = playListSongQuery.getResultList();
+        for (Object entity : data) 
+            em.refresh(entity);
+        playListSongList.clear();
+        playListSongList.addAll(data);
         
+        try {
+ 
+            File xmlFile = new File(fileName+".xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(xmlFile);
+
+            PlayList pl = new PlayList();
+            
+            pl.setName(doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent());
+            pl.setCreationdate(doc.getDocumentElement().getElementsByTagName("creation_date").item(0).getTextContent());
+            
+            em.persist(pl);
+            
+            NodeList nList = doc.getElementsByTagName("song");
+            
+            for (int i = 0; i < nList.getLength(); i++) {
+                PlayListSong pls = new PlayListSong();
+                pls.setPlaylistid(pl);
+                
+                outerloop:
+                for (Object o : playListSongList) {
+                    if (((PlayListSong)o).getSongid().getSongid().toString().matches(((Element)nList.item(i)).getAttribute("id"))) { 
+                        pls.setSongid(((PlayListSong)o).getSongid());
+                        break outerloop;
+                    }
+                }
+                if (pls.getSongid() != null) {
+                    em.persist(pls);
+                    playListSongList.add(pls);
+                    em.getTransaction().commit();
+                    em.getTransaction().begin();
+                }
+            }
+
+            em.getTransaction().commit();
+            em.getTransaction().begin();
+            list1.add(pl);
+            int row = list1.size() - 1;                    
+            jTable1.setRowSelectionInterval(row, row);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(row, 0, true ));
+            
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Παρουσιάστηκε σφάλμα!");
+        }
+               
     }//GEN-LAST:event_importButtonActionPerformed
     
 

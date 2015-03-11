@@ -9,6 +9,7 @@ import misc.DBManager;
 import misc.MyWindowEvent;
 import pojos.Album;
 import pojos.AlbumSong;
+import pojos.PlayListSong;
 import pojos.Song;
 
 
@@ -66,6 +67,8 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
         myRenderer1 = new misc.MyListRenderer();
         songQuery = em.createQuery("SELECT s FROM AlbumSong s WHERE s.albumid=:album").setParameter("album",album2);
         songList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(songQuery.getResultList());
+        playListSongQuery = java.beans.Beans.isDesignTime() ? null : em.createQuery("SELECT pls FROM PlayListSong pls");
+        playListSongList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(playListSongQuery.getResultList());
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -305,7 +308,19 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
 //Δημιουργία μεθόδου για πάτημα κουμπιού DELETE
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         int row = jTable1.getSelectedRow();
-        albumSong = (AlbumSong)songList.get(row);    
+        albumSong = (AlbumSong)songList.get(row);   
+        PlayListSong playListSong = new PlayListSong();
+        
+        // Διαγραφή από PlayListSong και playListSong
+        outerloop:
+        for (Object o : playListSongList) 
+            if (albumSong.getSongid().equals(((PlayListSong)o).getSongid())) {
+                playListSong = (PlayListSong)o;
+                break outerloop;
+            }
+        playListSongList.remove(playListSong);
+        em.remove(playListSong);
+                
         em.remove(albumSong); // διαγραφή τραγουδιού από τον πίνακα AlbumSong
         em.remove(albumSong.getSongid()); // διαγραφή τραγουδιού από τον πίνακα Song
         songList.remove(row);
@@ -434,6 +449,8 @@ public class EditArtistAlbumForm extends javax.swing.JFrame {
     private javax.persistence.Query musicProductionCompanyQuery;
     private misc.MyListRenderer myRenderer1;
     private javax.swing.JButton newButton;
+    private java.util.List playListSongList;
+    private javax.persistence.Query playListSongQuery;
     private javax.swing.JButton saveButton;
     private java.util.List songList;
     private javax.persistence.Query songQuery;

@@ -334,7 +334,7 @@ public class EditPlayListForm extends javax.swing.JFrame {
                 cnt += ((PlayListSong)o).getSongid().getDuration().longValue();
         
         // ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΔΙΑΡΚΕΙΑ ΛΙΣΤΑΣ ΜΙΣΗΣ ΩΡΑΣ
-        if (cnt >= 1800) {
+        if (readOnly == true || cnt >= 1800) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
             for (WindowListener l : this.getWindowListeners())
             l.windowClosed(we);
