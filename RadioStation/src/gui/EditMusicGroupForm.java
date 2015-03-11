@@ -227,7 +227,7 @@ public class EditMusicGroupForm extends javax.swing.JFrame {
     //Δημιουργία μεθόδου για πάτημα κουμπιού SAVE
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
        //ΑΜΥΝΤΙΚΟΣ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΣ ΓΙΑ ΝΑ ΕΧΕΙ ΤΟΥΛΑΧΙΣΤΟΝ 2 ΚΑΛΛΙΤΕΧΝΕΣ ΤΟ ΓΚΡΟΥΠ
-        if (artistList.size() >= 2) {
+        if (readOnly == true || artistList.size() >= 2) {
             MyWindowEvent we = new MyWindowEvent(this, WindowEvent.WINDOW_CLOSED, true);
             for (WindowListener l : this.getWindowListeners())
                 l.windowClosed(we);
